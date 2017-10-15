@@ -1,6 +1,7 @@
 #include "channel_ipv4.h"
 #include <errno.h>
 #include <string.h>
+#include <fcntl.h>
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
 
@@ -25,7 +26,9 @@ bool ChannelIPv4::Init() {
   int fd = socket(AF_INET, option_.sock_type, 0);
   if (-1 == fd)
     return false;
-  
+  if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
+    return false;
+
   struct sockaddr_in serv_addr;
   memset(&serv_addr, 0, sizeof(serv_addr));
  
