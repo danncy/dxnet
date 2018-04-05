@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/main.dir/port.cpp.o CMakeFiles/main.dir/board.cpp.o CMakeFiles/main.dir/main.cpp.o  -o main -rdynamic 

@@ -1,0 +1,3 @@
+/home/dancy/trunk/dxnet/network_adapter/CMakeFiles/rebuild_cache.dir
+/home/dancy/trunk/dxnet/network_adapter/CMakeFiles/edit_cache.dir
+/home/dancy/trunk/dxnet/network_adapter/CMakeFiles/main.dir
