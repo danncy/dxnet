@@ -23,4 +23,12 @@ board.h
 /home/dancy/trunk/dxnet/network_adapter/board.h
 
 /home/dancy/trunk/dxnet/network_adapter/port.cpp
+port.h
+/home/dancy/trunk/dxnet/network_adapter/port.h
+
+/home/dancy/trunk/dxnet/network_adapter/port.h
+stdint.h
+-
+string
+-
 
