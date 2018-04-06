@@ -13,7 +13,10 @@ MainLoop* MainLoop::current() {
 }
 
 void MainLoop::Run() {
-
+  while(!pending_task_queue_.empty()) {
+    pending_task_queue_.front().Closure();
+    pending_task_queue_.pop();
+  }
 }
 
 bool MainLoop::Start() {

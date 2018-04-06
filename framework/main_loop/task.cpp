@@ -3,7 +3,7 @@
 namespace framework {
 
 Task::Task(std::function<void()> closure)
-  : closure_(closure)
+  : Closure(closure)
 {}
 
 Task::~Task() {}

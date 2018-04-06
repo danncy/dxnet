@@ -10,7 +10,7 @@ struct Task {
   Task(std::function<void()> closure);
   ~Task();
 
-  std::function<void()> closure_;
+  std::function<void()> Closure;
   //TODO:
   //add timetick to delay task 
 };

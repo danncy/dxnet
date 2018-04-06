@@ -1,6 +1,8 @@
 #ifndef FRAMEWORK_MAIN_LOOP_H_
 #define FRAMEWORK_MAIN_LOOP_H_
 
+#include "task.h"
+
 namespace framework {
 
 /*
@@ -22,7 +24,7 @@ struct MainLoop {
   bool Stop();
 
 private:
-  
+  TaskQueue pending_task_queue_;
 };
 
 } // namespace framework
