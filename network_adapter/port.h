@@ -1,14 +1,14 @@
 #ifndef DXNET_PORT_H_
 #define DXNET_PORT_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 namespace dxnet {
 
 struct Port {
   Port(uint8_t index, uint32_t addr);
-  ~Port();
+  virtual ~Port();
 
   uint8_t Index() { return index_; }
   uint32_t Addr() { return addr_; }

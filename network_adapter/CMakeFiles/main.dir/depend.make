@@ -3,6 +3,7 @@
 
 CMakeFiles/main.dir/board.cpp.o: board.cpp
 CMakeFiles/main.dir/board.cpp.o: board.h
+CMakeFiles/main.dir/board.cpp.o: port.h
 
 CMakeFiles/main.dir/main.cpp.o: board.h
 CMakeFiles/main.dir/main.cpp.o: main.cpp

@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
 
    dxnet::Board board("eth0", "00::00::00::00::00::00");
 
-   std::cout << board.Name() << "  HWaddr " << board.Addr() << std::endl;
+   std::cout << board;
 
    return 0;
 }

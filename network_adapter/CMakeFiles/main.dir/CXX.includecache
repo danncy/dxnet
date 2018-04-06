@@ -9,11 +9,19 @@
 /home/dancy/trunk/dxnet/network_adapter/board.cpp
 board.h
 /home/dancy/trunk/dxnet/network_adapter/board.h
+port.h
+/home/dancy/trunk/dxnet/network_adapter/port.h
 
 /home/dancy/trunk/dxnet/network_adapter/board.h
 string
 -
 vector
+-
+memory
+-
+cstdint
+-
+ostream
 -
 
 /home/dancy/trunk/dxnet/network_adapter/main.cpp

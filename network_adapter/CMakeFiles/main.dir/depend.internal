@@ -4,6 +4,7 @@
 CMakeFiles/main.dir/board.cpp.o
  /home/dancy/trunk/dxnet/network_adapter/board.cpp
  /home/dancy/trunk/dxnet/network_adapter/board.h
+ /home/dancy/trunk/dxnet/network_adapter/port.h
 CMakeFiles/main.dir/main.cpp.o
  /home/dancy/trunk/dxnet/network_adapter/board.h
  /home/dancy/trunk/dxnet/network_adapter/main.cpp
