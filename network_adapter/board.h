@@ -15,7 +15,7 @@ struct Board {
   Board(const std::string& name, const std::string& addr);
   virtual ~Board();
 
-	void appendPort(std::unique_ptr<Port> port);
+  void appendPort(std::unique_ptr<Port> port);
   void removePort(uint8_t index);
   Port* getPort(uint8_t index);
   int portNum();
