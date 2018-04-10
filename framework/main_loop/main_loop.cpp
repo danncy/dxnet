@@ -1,9 +1,10 @@
 #include "main_loop.h"
+#include <algorithm>
 
 namespace framework {
 
-MainLoop::MainLoop() {
-}
+MainLoop::MainLoop()
+  : state_(START) {}
 
 MainLoop::~MainLoop() {}
 
@@ -13,22 +14,32 @@ MainLoop* MainLoop::current() {
 }
 
 void MainLoop::Run() {
-  while(!pending_task_queue_.empty()) {
-    pending_task_queue_.front().Closure();
-    pending_task_queue_.pop();
+  for (;;) {
+
+    if (!pending_task_queue_.empty() && state_ == START) {
+      pending_task_queue_.front().Closure();
+      pending_task_queue_.pop();
+    }
+
+    if (state_ == STOP)
+      break;
   }
 }
 
-bool MainLoop::Start() {
-  return true;
+void MainLoop::PostTask(Task task) {
+  pending_task_queue_.push(std::move(task));
 }
 
-bool MainLoop::Pause() {
-  return true;
+void MainLoop::Start() {
+  state_ = START;
 }
 
-bool MainLoop::Stop() {
-  return true;
+void MainLoop::Pause() {
+  state_ = PAUSE;
+}
+
+void MainLoop::Stop() {
+  state_ = STOP;
 }
 
 }
