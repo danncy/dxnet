@@ -1,16 +1,25 @@
 #include "main_loop.h"
 #include <algorithm>
+#include "framework/thread/thread_local.h"
 
 namespace framework {
 
-MainLoop::MainLoop()
-  : state_(START) {}
+namespace {
+  ThreadLocalPointer<MainLoop> g_main_loop_tls;
+}
 
-MainLoop::~MainLoop() {}
+MainLoop::MainLoop()
+  : state_(START) {
+  g_main_loop_tls.Set(this);  
+}
+
+MainLoop::~MainLoop() {
+  g_main_loop_tls.Set(nullptr);
+}
 
 //static
 MainLoop* MainLoop::current() {
-  return nullptr;
+  return g_main_loop_tls.Get();
 }
 
 void MainLoop::Run() {
