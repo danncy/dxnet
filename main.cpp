@@ -1,6 +1,6 @@
 #include "framework/public/logging.h"
 #include "framework/thread/thread.h"
-#include "framework/main_loop/task.h"
+#include "framework/main_loop/main_loop.h"
 #include <functional>
 
 void log() {
@@ -20,6 +20,9 @@ int main(int argc, char** argv) {
   thread.main_loop()->PostTask(framework::Task(std::bind([](){
     LOG(DEBUG) << "thread testing.\n";
         })));
+
+  framework::MainLoop mainloop;
+  mainloop.Run();
 
   return 0;
 }
