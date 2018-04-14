@@ -30,7 +30,7 @@ struct Thread {
   explicit Thread(const std::string& name);
   virtual ~Thread();
 
-  void MainRoutine();
+  void Mainloop();
 
   bool Start();
   bool StartWithOptions(const Options& option);
@@ -43,9 +43,14 @@ struct Thread {
     return name_;
   }
 
+  pthread_t Id() const {
+    return thread_id_;
+  }
+
 private:
   std::string name_;
   std::unique_ptr<MainLoop> main_loop_;
+  pthread_t thread_id_;
 };
 
 }// namespace framework
