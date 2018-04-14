@@ -14,7 +14,7 @@ struct Logger {
     };
   };
 
-  Logger(Level::Severity level);
+  Logger(Level::Severity level, const char* file, int line);
 
   template<typename T>
   Logger& operator << (const T& info) {
@@ -37,7 +37,8 @@ private:
 };
 } // namespace framework
 
-using LOG   = ::framework::Logger;
+#define LOG(level) \
+  ::framework::Logger(level, __FILE__, __LINE__)
 using LEVEL = ::framework::Logger::Level::Severity;
 
 const LEVEL DEBUG = ::framework::Logger::Level::Severity::DEBUG;
