@@ -7,12 +7,31 @@
 
 namespace framework {
 
-struct Logger {
+struct DummyLogger {
+  DummyLogger() {}
+  template<typename T>
+  DummyLogger& operator<<(const T& info) {}
+};
+
+struct Logger : public DummyLogger {
   struct Level {
     enum class Severity : int {
-      DEBUG,INFO,WARN,ERROR,FATAL,
+      NONE,DEBUG,INFO,WARN,ERROR,FATAL,
     };
   };
+
+  enum class Targets : int {
+    CONSOLE,FILE,STREAM,
+  };
+
+  static Targets target;
+  template <Targets tg = Targets::CONSOLE>
+  struct Output {
+  };
+
+  static bool WillCreateLogger(Level::Severity level) {
+    return level > Level::Severity::NONE;
+  }
 
   Logger(Level::Severity level, const char* file, int line);
 
@@ -28,6 +47,7 @@ struct Logger {
   }
 private:
   void Init();
+  std::string LevelToString(Level::Severity level);
 
 private:
   Level::Severity level_ = Level::Severity::DEBUG;
@@ -35,12 +55,22 @@ private:
   int line_;
   std::ostringstream stream_;
 };
+
 } // namespace framework
 
-#define LOG(level) \
-  ::framework::Logger(level, __FILE__, __LINE__)
-using LEVEL = ::framework::Logger::Level::Severity;
+#define LOG_ENABLE(level) \
+  ::framework::Logger::WillCreateLogger(level)
 
+#define LOGGER(level) \
+  ::framework::Logger(level, __FILE__, __LINE__)
+
+#define LOGGING(level, condition) \
+  !condition ? ::framework::DummyLogger() : LOGGER(level)
+
+#define LOG(level) \
+  LOGGING(level, LOG_ENABLE(level))
+
+using LEVEL = ::framework::Logger::Level::Severity;
 const LEVEL DEBUG = ::framework::Logger::Level::Severity::DEBUG;
 const LEVEL INFO  = ::framework::Logger::Level::Severity::INFO;
 const LEVEL WARN  = ::framework::Logger::Level::Severity::WARN;
