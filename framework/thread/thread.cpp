@@ -1,4 +1,5 @@
 #include "thread.h"
+#include "framework/public/logging.h"
 
 namespace framework {
 
@@ -17,11 +18,13 @@ void Thread::Mainloop() {
 }
 
 bool Thread::Start() {
+  LOG(INFO) << __func__;
   Options option;
   return StartWithOptions(option);
 }
 
 void* ThreadMain(void* arguments) {
+  LOG(INFO) << __func__;
   if (!arguments)
     return nullptr;
 
@@ -32,6 +35,7 @@ void* ThreadMain(void* arguments) {
 }
 
 bool Thread::StartWithOptions(const Options& option) {
+  LOG(INFO) << "StartWithOptions\n";
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   bool success = true;
@@ -42,8 +46,10 @@ bool Thread::StartWithOptions(const Options& option) {
     pthread_attr_setstacksize(&attr, option.stack_size);
 
   int ret = pthread_create(&thread_id_, &attr, ThreadMain, this);
+  LOG(INFO) << ret;
   if (ret) {
     //log pthread_create failed.
+    LOG(ERROR) << ret;
     success = false;
   }
   pthread_attr_destroy(&attr);

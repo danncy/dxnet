@@ -38,7 +38,9 @@ struct Logger : public DummyLogger {
   template<typename T>
   Logger& operator << (const T& info) {
     stream_ << info;
-    std::cout << stream_.str();
+    if (*str().rbegin() != '\n')
+      stream_ << '\n';
+    std::cout << stream_.str() << std::flush;
     return *this;
   }
 

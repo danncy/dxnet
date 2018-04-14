@@ -8,11 +8,19 @@ namespace framework {
 template<typename T>
 struct ThreadLocalPointer {
 
-  explicit ThreadLocalPointer();
-  ~ThreadLocalPointer();
+  ThreadLocalPointer() {
+    pthread_key_create(&key_, nullptr);
+  }
+  ~ThreadLocalPointer() {
+    pthread_key_delete(key_);
+  }
 
-  void Set(T* ptr);
-  T* Get();
+  void Set(T* ptr) {
+    pthread_setspecific(key_, ptr);
+  }
+  T* Get() {
+    return static_cast<T*>(pthread_getspecific(key_));
+  }
 
 private:
   pthread_key_t key_;
