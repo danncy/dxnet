@@ -2,6 +2,7 @@
 #define FRAMEWORK_MAIN_LOOP_H_
 
 #include "task.h"
+#include "framework/public/time.h"
 
 namespace framework {
 
@@ -25,6 +26,7 @@ struct MainLoop {
   void Start();
   void Pause();
   void Stop();
+  void Sleep(TimeSlice duration);
 
 private:
   TaskQueue pending_task_queue_;

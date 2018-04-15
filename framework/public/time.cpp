@@ -3,94 +3,24 @@
 
 namespace framework {
 
-// static
-constexpr TimeSlice TimeSlice::FromDays(int days) {
-  return days == std::numeric_limits<int>::max()
-             ? Max()
-             : TimeSlice(days * Time::kMicrosecondsPerDay);
+int64_t SaturatedAdd(TimeSlice delta, int64_t value) {
+  int64_t result = delta.timeslice_ + value;
+  if (std::abs(result) < std::numeric_limits<int64_t>::max())
+    return result;
+
+  if (value < 0)
+    return std::numeric_limits<int64_t>::max();
+  return std::numeric_limits<int64_t>::min();
 }
 
-// static
-constexpr TimeSlice TimeSlice::FromHours(int hours) {
-  return hours == std::numeric_limits<int>::max()
-             ? Max()
-             : TimeSlice(hours * Time::kMicrosecondsPerHour);
-}
+int64_t SaturatedSub(TimeSlice delta, int64_t value) {
+  int64_t result = delta.timeslice_ - value;
+  if (std::abs(result) < std::numeric_limits<int64_t>::max())
+    return result;
 
-// static
-constexpr TimeSlice TimeSlice::FromMinutes(int minutes) {
-  return minutes == std::numeric_limits<int>::max()
-             ? Max()
-             : TimeSlice(minutes * Time::kMicrosecondsPerMinute);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromSeconds(int64_t secs) {
-  return FromProduct(secs, Time::kMicrosecondsPerSecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromMilliseconds(int64_t ms) {
-  return FromProduct(ms, Time::kMicrosecondsPerMillisecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromMicroseconds(int64_t us) {
-  return TimeSlice(us);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromNanoseconds(int64_t ns) {
-  return TimeSlice(ns / Time::kNanosecondsPerMicrosecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromSecondsD(double secs) {
-  return FromDouble(secs * Time::kMicrosecondsPerSecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromMillisecondsD(double ms) {
-  return FromDouble(ms * Time::kMicrosecondsPerMillisecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromMicrosecondsD(double us) {
-  return FromDouble(us);
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromNanosecondsD(double ns) {
-  return FromDouble(ns / Time::kNanosecondsPerMicrosecond);
-}
-
-// static
-constexpr TimeSlice TimeSlice::Max() {
-  return TimeSlice(std::numeric_limits<int64_t>::max());
-}
-
-// static
-constexpr TimeSlice TimeSlice::Min() {
-  return TimeSlice(std::numeric_limits<int64_t>::min());
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromDouble(double value) {
-  return value > std::numeric_limits<int64_t>::max()
-             ? Max()
-             : value < std::numeric_limits<int64_t>::min()
-                   ? Min()
-                   : TimeSlice(static_cast<int64_t>(value));
-}
-
-// static
-constexpr TimeSlice TimeSlice::FromProduct(int64_t value,
-                                           int64_t positive_value) {
-  return value > std::numeric_limits<int64_t>::max() / positive_value
-             ? Max()
-             : value < std::numeric_limits<int64_t>::min() / positive_value
-                   ? Min()
-                   : TimeSlice(value * positive_value);
+  if (value < 0)
+    return std::numeric_limits<int64_t>::min();
+  return std::numeric_limits<int64_t>::max();
 }
 
 int TimeSlice::InDays() const {

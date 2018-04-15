@@ -1,5 +1,6 @@
 #include "main_loop.h"
 #include <algorithm>
+#include <time.h>
 #include "framework/thread/thread_local.h"
 
 namespace framework {
@@ -32,6 +33,10 @@ void MainLoop::Run() {
 
     if (state_ == STOP)
       break;
+
+    if (pending_task_queue_.empty()) {
+      Sleep(TimeSlice::FromMilliseconds(10));
+    }
   }
 }
 
@@ -49,6 +54,17 @@ void MainLoop::Pause() {
 
 void MainLoop::Stop() {
   state_ = STOP;
+}
+
+void MainLoop::Sleep(TimeSlice duration) {
+  struct timespec sleep_time, rest_time;
+
+  sleep_time.tv_sec = duration.InSeconds();
+  duration -= TimeSlice::FromSeconds(sleep_time.tv_sec);
+  sleep_time.tv_nsec = duration.InMicroseconds() * 1000;
+
+  while (nanosleep(&sleep_time, &rest_time) == -1 && errno == EINTR)
+    sleep_time = rest_time;
 }
 
 }

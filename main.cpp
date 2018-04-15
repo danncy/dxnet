@@ -3,7 +3,7 @@
 #include "framework/main_loop/main_loop.h"
 #include <functional>
 
-void log() {
+void log_test() {
   LOG(DEBUG) << "thread testing log.";
 }
 
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
   } else {
     LOG(DEBUG) << "thread start success!\n";
   }
-  thread.main_loop()->PostTask(framework::Task(std::bind(log)));
+  thread.main_loop()->PostTask(framework::Task(std::bind(log_test)));
   thread.main_loop()->PostTask(framework::Task(std::bind([](){
     LOG(DEBUG) << "thread testing.\n";
         })));
