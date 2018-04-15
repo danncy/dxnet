@@ -1,10 +1,12 @@
 #include "framework/public/logging.h"
+#include "framework/public/format.h"
 #include "framework/thread/thread.h"
 #include "framework/main_loop/main_loop.h"
 #include <functional>
 
 void log_test() {
   LOG(DEBUG) << "thread testing log.";
+  LOG(DEBUG) << _F("thread testing %1 log %2.") % 2 % "good!";
 }
 
 int main(int argc, char** argv) {
