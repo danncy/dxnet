@@ -13,25 +13,25 @@ Board::~Board() {
   ports_.clear();
 }
 
-void Board::appendPort(std::unique_ptr<Port> port) {
+void Board::AppendPort(std::unique_ptr<Port> port) {
   ports_.push_back(std::move(port));
 }
 
-void Board::removePort(uint8_t index) {
-  if (index >= portNum())
+void Board::RemovePort(int index) {
+  if (index >= PortNum())
     return;
   auto it = ports_.erase(ports_.begin() + index);
   it->reset();
 }
 
-Port* Board::getPort(uint8_t index) {
-  if (index >= portNum())
+Port* Board::GetPort(int index) {
+  if (index >= PortNum())
     return nullptr;
 
   return ports_[index].get();
 }
 
-int Board::portNum() {
+int Board::PortNum() {
   return ports_.size();
 }
 

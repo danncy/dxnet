@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <cstdint>
 #include <ostream>
 
 namespace dxnet {
@@ -13,12 +12,12 @@ struct Port;
 
 struct Board {
   Board(const std::string& name, const std::string& addr);
-  virtual ~Board();
+  ~Board();
 
-  void appendPort(std::unique_ptr<Port> port);
-  void removePort(uint8_t index);
-  Port* getPort(uint8_t index);
-  int portNum();
+  void AppendPort(std::unique_ptr<Port> port);
+  void RemovePort(int index);
+  Port* GetPort(int index);
+  int PortNum();
 
   std::string Name() { return name_; }
   std::string Addr() { return addr_; }
@@ -26,11 +25,11 @@ struct Board {
   friend std::ostream& operator << (std::ostream& os, const Board& board);
   friend bool operator == (const Board& bda, const Board& bdb);
 
-	private:
-		std::string name_;
-		std::string addr_;
+private:
+	std::string name_;
+	std::string addr_;
 
-    std::vector<std::unique_ptr<Port>> ports_;
+  std::vector<std::unique_ptr<Port>> ports_;
 };
 
 } // namespace dxnet
