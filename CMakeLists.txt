@@ -15,3 +15,4 @@ LINK_DIRECTORIES(${PROJECT_BINARY_DIR}/lib)
 ADD_EXECUTABLE(main main.cpp)
 TARGET_LINK_LIBRARIES(main public mainloop public thread pthread)
 
+ADD_EXECUTABLE(adapterd adapterd.cpp)
