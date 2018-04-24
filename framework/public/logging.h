@@ -25,9 +25,10 @@ struct Logger : public DummyLogger {
   };
 
   static Targets target;
-  template <Targets tg = Targets::CONSOLE>
-  struct Output {
-  };
+  template <Logger::Targets N>
+  std::ostream& Output(char(*)[N == Targets::CONSOLE] = 0) {
+    return std::cout;
+  }
 
   static bool WillCreateLogger(Level::Severity level) {
     return level > Level::Severity::NONE;
@@ -40,7 +41,7 @@ struct Logger : public DummyLogger {
     stream_ << info;
     if (*str().rbegin() != '\n')
       stream_ << '\n';
-    std::cout << stream_.str() << std::flush;
+    Output<Targets::CONSOLE>() << stream_.str();
     return *this;
   }
 

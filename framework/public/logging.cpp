@@ -5,6 +5,8 @@
 
 namespace framework {
 
+Logger::Targets Logger::target = Logger::Targets::CONSOLE;
+
 Logger::Logger(Level::Severity level,
                const char* file,
                int line) 
@@ -15,25 +17,25 @@ Logger::Logger(Level::Severity level,
 }
 
 void Logger::Init() {
-  stream_ <<  '[';
   std::time_t t = std::time(nullptr);
-  stream_ << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S")
-          << "][" << file_ << "(" << line_ << ")]"
-          << LevelToString(level_);
+  stream_ << LevelToString(level_) 
+          << "["
+          << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S")
+          << "][" << file_ << "(" << line_ << ")]:";
 }
 
 std::string Logger::LevelToString(Level::Severity level) {
   switch (level) {
     case Level::Severity::DEBUG:
-      return "[DEBUG] ";
+      return "[DBG]";
     case Level::Severity::INFO:
-      return "[INFO] ";
+      return "[INF]";
     case Level::Severity::WARN:
-      return "[WARN] ";
+      return "[WRN]";
     case Level::Severity::ERROR:
-      return "[ERROR] ";
+      return "[ERR]";
     case Level::Severity::FATAL:
-      return "[FATAL] ";
+      return "[FTL]";
     default:
       break;
   }
