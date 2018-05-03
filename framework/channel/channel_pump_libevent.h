@@ -9,37 +9,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#ifndef FRAMEWORK_CHANNEL_PUMP_LIBEVENT_H_
+#define FRAMEWORK_CHANNEL_PUMP_LIBEVENT_H_
 
-#ifndef FRAMEWORK_CHANNEL_IPV4_H_
-#define FRAMEWORK_CHANNEL_IPV4_H_
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string>
-
-#include "framework/public/scoped_variable.h"
-#include "framework/channel/channel.h"
+#include "framework/channel/channel_pump.h"
 
 namespace framework {
 
-struct ChannelIPv4 : public Channel {
+struct ChannelPumpLibevent : public ChannelPump {
+  ChannelPumpLibevent();
+  ~ChannelPumpLibevent();
 
-  ChannelIPv4(const Channel::Option& option);
-  ~ChannelIPv4();
-
-private:
-  bool Init();
-  in_addr_t GetInAddr() const {
-    return address_.empty() ? INADDR_ANY : inet_addr(address_.c_str());
-  }
-
-private:
-  Channel::Option option_;
-  std::string address_;
-  scoped_fd sock_;
-  scoped_fd listen_sock_;
-
+  void Run() override;
 };
-
 }//namespace framework
+
 #endif
