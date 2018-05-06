@@ -14,6 +14,8 @@
 
 #include "framework/channel/channel_pump.h"
 
+struct event_base;
+
 namespace framework {
 
 struct ChannelPumpLibevent : public ChannelPump {
@@ -21,6 +23,14 @@ struct ChannelPumpLibevent : public ChannelPump {
   ~ChannelPumpLibevent();
 
   void Run() override;
+  static void OnNotify(int fd, short flags, void* observer);
+
+  bool Watch(int fd,
+             bool persistent,
+             int mode,
+             ChannelPump::Observer* observer);
+private:
+  event_base* evt_base_;
 };
 }//namespace framework
 

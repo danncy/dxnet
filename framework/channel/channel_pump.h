@@ -18,6 +18,17 @@ struct ChannelPump {
   ChannelPump();
   virtual ~ChannelPump();
 
+  enum class Mode : int {
+    WATCH_READ = 1 << 0,
+    WATCH_WRITE = 1 << 1,
+    WATCH_READ_WRITE = WATCH_READ | WATCH_WRITE
+  };
+
+  struct Observer {
+    virtual void OnRead(int fd) = 0;
+    virtual void OnWrite(int fd) = 0;
+  };
+
   virtual void Run() = 0;
 };
 
