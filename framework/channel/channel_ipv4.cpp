@@ -1,6 +1,6 @@
 #include "channel_ipv4.h"
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 #include <fcntl.h>
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
@@ -15,8 +15,8 @@ ChannelIPv4::ChannelIPv4(const Channel::Option& option)
       address_.empty())
     address_ = "127.0.0.1";
 
-  if (Init()) {
-    LOG(ERROR) << _F("Channel created fail, error is %1") % errno;
+  if (!Init()) {
+    LOG(ERROR) << _F("Channel failed, errno is %1, info: %2") % errno % Error();
   }
 }
 

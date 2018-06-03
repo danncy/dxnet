@@ -61,6 +61,8 @@ struct Channel {
   Channel(const Option& option);
   virtual ~Channel();
 
+  int ErrorCode() const;
+  std::string Error() const;
 };
 
 }//namespace framework
