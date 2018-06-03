@@ -1,15 +1,28 @@
 #include "channel_pump_libevent.h"
-#include <memory>
 
 #include "third_party/libevent/include/event.h"
 
 namespace framework {
 
-ChannelPumpLibevent::ChannelPumpLibevent() {}
+ChannelPumpLibevent::ChannelPumpLibevent()
+  : evt_base_(event_base_new()),
+    evt_(nullptr)
+{}
 
-ChannelPumpLibevent::~ChannelPumpLibevent() {}
+ChannelPumpLibevent::~ChannelPumpLibevent() {
+  if (evt_) {
+    event_del(evt_.get());
+    evt_.reset();
+  }
+  event_base_loopbreak(evt_base_);
+  event_base_free(evt_base_);
+}
 
-void ChannelPumpLibevent::Run() {}
+void ChannelPumpLibevent::Run() {
+  for(;;) {
+    event_base_loop(evt_base_, EVLOOP_NONBLOCK);
+  }
+}
 
 //static
 void ChannelPumpLibevent::OnNotify(int fd, short flags, void* observer) {
@@ -38,14 +51,14 @@ bool ChannelPumpLibevent::Watch(int fd,
   if (mode & static_cast<int>(ChannelPump::Mode::WATCH_WRITE))
     event_mask |= EV_WRITE;
 
-  std::unique_ptr<event> evt(new event);
-  event_set(evt.get(), fd, event_mask, OnNotify, observer);
+  evt_.reset(new event);
+  event_set(evt_.get(), fd, event_mask, OnNotify, observer);
 
-  if (event_base_set(evt_base_, evt.get())) {
+  if (event_base_set(evt_base_, evt_.get())) {
     return false;
   }
 
-  if (event_add(evt.get(), nullptr)) {
+  if (event_add(evt_.get(), nullptr)) {
     return false;
   }
   return true;

@@ -13,8 +13,10 @@
 #define FRAMEWORK_CHANNEL_PUMP_LIBEVENT_H_
 
 #include "framework/channel/channel_pump.h"
+#include <memory>
 
 struct event_base;
+struct event;
 
 namespace framework {
 
@@ -31,6 +33,7 @@ struct ChannelPumpLibevent : public ChannelPump {
              ChannelPump::Observer* observer);
 private:
   event_base* evt_base_;
+  std::unique_ptr<event> evt_;
 };
 }//namespace framework
 
