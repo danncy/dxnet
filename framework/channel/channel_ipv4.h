@@ -43,6 +43,7 @@ private:
   std::string address_;
   scoped_fd sock_;
   scoped_fd listen_sock_;
+  struct sockaddr_in serv_addr_;
   ChannelPumpLibevent pump_;
 
 };
