@@ -23,6 +23,7 @@ ChannelIPv4::ChannelIPv4(const Channel::Option& option)
 ChannelIPv4::~ChannelIPv4() {}
 
 bool ChannelIPv4::Init() {
+  LOG(INFO) << _F("ipv4 channel init.");
   int fd = socket(AF_INET, option_.sock_type, 0);
   if (-1 == fd)
     return false;
@@ -58,6 +59,14 @@ bool ChannelIPv4::Init() {
     }
   }
   return true;
+}
+
+void ChannelIPv4::OnRead(int fd) {
+
+}
+
+void ChannelIPv4::OnWrite(int fd) {
+
 }
 
 }

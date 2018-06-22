@@ -19,13 +19,18 @@
 
 #include "framework/public/scoped_variable.h"
 #include "framework/channel/channel.h"
+#include "framework/channel/channel_pump_libevent.h"
 
 namespace framework {
 
-struct ChannelIPv4 : public Channel {
+struct ChannelIPv4 : public Channel,
+                     public ChannelPump::Observer {
 
   ChannelIPv4(const Channel::Option& option);
   ~ChannelIPv4();
+
+  void OnRead(int fd) override;
+  void OnWrite(int fd) override;
 
 private:
   bool Init();
@@ -38,6 +43,7 @@ private:
   std::string address_;
   scoped_fd sock_;
   scoped_fd listen_sock_;
+  ChannelPumpLibevent pump_;
 
 };
 

@@ -1,9 +1,11 @@
 #include <iostream>
 #include "framework/channel/channel_ipv4.h"
 #include "framework/main_loop/main_loop.h"
+#include "framework/public/format.h"
+#include "framework/public/logging.h"
 
 int main(int argc, char** argv) {
-  std::cout << "adapter init!" << std::endl;
+  LOG(INFO) << _F("adapter init!");
 
   framework::Channel::Option opt(framework::Channel::Type::SOCK_INET);
   opt.sock_type = SOCK_STREAM;
