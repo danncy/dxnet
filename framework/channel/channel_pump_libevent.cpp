@@ -43,12 +43,13 @@ void ChannelPumpLibevent::OnNotify(int fd, short flags, void* observer) {
 
 bool ChannelPumpLibevent::Watch(int fd,
                                 bool persistent,
-                                int mode,
+                                ChannelPump::Mode mode,
                                 ChannelPump::Observer* observer) {
   int event_mask = persistent ? EV_PERSIST : 0;
-  if (mode & static_cast<int>(ChannelPump::Mode::WATCH_READ))
+  int event_mode = static_cast<int>(mode);
+  if (event_mode & static_cast<int>(ChannelPump::Mode::WATCH_READ))
     event_mask |= EV_READ;
-  if (mode & static_cast<int>(ChannelPump::Mode::WATCH_WRITE))
+  if (event_mode & static_cast<int>(ChannelPump::Mode::WATCH_WRITE))
     event_mask |= EV_WRITE;
 
   evt_.reset(new event);

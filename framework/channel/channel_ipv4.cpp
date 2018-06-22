@@ -51,7 +51,7 @@ bool ChannelIPv4::Init() {
 
     pump_.Watch(listen_sock_.get(),
                 false,
-                static_cast<int>(ChannelPump::Mode::WATCH_READ),
+                ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
     pump_.Run();
   } else if (option_.mode == Channel::Mode::CLIENT) {
@@ -74,6 +74,11 @@ void ChannelIPv4::OnRead(int fd) {
     if (tmp_fd < 0) {
       LOG(ERROR) << _F("accept new connection failed.");
     } else {
+      if (sock_.IsValid()) {
+        LOG(ERROR) << _F("don't support multi client, will todo in future.");
+        close(tmp_fd);
+        return;
+      }
       sock_.reset(tmp_fd);
       LOG(INFO) << _F("accept a connection");
     }

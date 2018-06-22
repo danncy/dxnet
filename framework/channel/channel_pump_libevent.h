@@ -29,7 +29,7 @@ struct ChannelPumpLibevent : public ChannelPump {
 
   bool Watch(int fd,
              bool persistent,
-             int mode,
+             ChannelPump::Mode mode,
              ChannelPump::Observer* observer);
 private:
   event_base* evt_base_;
