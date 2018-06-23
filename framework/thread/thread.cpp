@@ -1,5 +1,6 @@
 #include "thread.h"
 #include "framework/public/logging.h"
+#include "framework/public/format.h"
 
 namespace framework {
 
@@ -18,7 +19,7 @@ void Thread::Mainloop() {
 }
 
 bool Thread::Start() {
-  LOG(INFO) << __func__;
+  LOG(INFO) << _F("%1 thread name: %2") % __func__ % Name();
   Options option;
   return StartWithOptions(option);
 }

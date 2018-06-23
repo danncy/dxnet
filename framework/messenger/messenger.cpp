@@ -1,10 +1,11 @@
 #include "messenger.h"
 #include "framework/channel/channel.h"
+#include "framework/public/rand_util.h"
 
 namespace framework {
 
 Messenger::Messenger()
-  : worker_thread_("worker") {
+  : worker_thread_(std::string("worker.") + GenerateUniqueRandomProcId()) {
     worker_thread_.Start();
   }
 
