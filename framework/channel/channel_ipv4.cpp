@@ -64,15 +64,34 @@ bool ChannelIPv4::Init() {
 }
 
 bool ChannelIPv4::StartWatching() {
-  if (option_.mode == Channel::Mode::SERVER) {
-    if (messenger_) {
-      messenger_->pump()->Watch(listen_sock_.get(),
-                  false,
-                  ChannelPump::Mode::WATCH_READ,
-                  static_cast<ChannelPump::Observer*>(this));
-      messenger_->mainloop()->PostTask(
+  if (messenger_) {
+    messenger_->mainloop()->PostTask(
         std::bind(ChannelPump::Run, messenger_->pump()));
+  } else {
+    LOG(ERROR) << _F("Messenger is not initialized for channel.");
+    return false;
+  }
+
+  if (option_.mode == Channel::Mode::SERVER) {
+    if (!listen_sock_.IsValid()) {
+      LOG(ERROR) << _F("channel init socket error in server mode.");
+      return false;
     }
+
+    messenger_->pump()->Watch(listen_sock_.get(),
+                false,
+                ChannelPump::Mode::WATCH_READ,
+                static_cast<ChannelPump::Observer*>(this));
+  } else if (option_.mode == Channel::Mode::CLIENT) {
+    if (!sock_.IsValid()) {
+      LOG(ERROR) << _F("channel init socket error in server mode.");
+      return false;
+    }
+
+    messenger_->pump()->Watch(sock_.get(),
+                true,
+                ChannelPump::Mode::WATCH_READ_WRITE,
+                static_cast<ChannelPump::Observer*>(this));
   }
   return true;
 }
