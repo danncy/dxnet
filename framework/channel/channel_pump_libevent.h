@@ -30,7 +30,7 @@ struct ChannelPumpLibevent : public ChannelPump {
   bool Watch(int fd,
              bool persistent,
              ChannelPump::Mode mode,
-             ChannelPump::Observer* observer);
+             ChannelPump::Observer* observer) override;
 private:
   event_base* evt_base_;
   std::unique_ptr<event> evt_;

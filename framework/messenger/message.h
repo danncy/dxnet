@@ -10,7 +10,7 @@ struct Message {
   uint8_t route_id;
   uint8_t type;
   char* data;
-  uint32 length;
+  uint32_t length;
 
 };
 }// namespace framework

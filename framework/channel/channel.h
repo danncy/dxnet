@@ -19,6 +19,8 @@
 
 namespace framework {
 
+struct Messenger;
+
 struct Channel {
   enum class Type : int {
     FIFO,
@@ -60,6 +62,8 @@ struct Channel {
 
   Channel(const Option& option);
   virtual ~Channel();
+
+  virtual void AddWatcher(Messenger* messenger) = 0;
 
   int ErrorCode() const;
   std::string Error() const;

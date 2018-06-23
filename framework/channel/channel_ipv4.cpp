@@ -2,15 +2,18 @@
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
+#include <functional>
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
+#include "framework/messenger/messenger.h"
 
 namespace framework {
 
 ChannelIPv4::ChannelIPv4(const Channel::Option& option)
   : Channel(option),
     option_(option),
-    address_(option.sock_addr) {
+    address_(option.sock_addr),
+    messenger_(nullptr) {
   if (option_.mode == Channel::Mode::CLIENT &&
       address_.empty())
     address_ = "127.0.0.1";
@@ -48,12 +51,6 @@ bool ChannelIPv4::Init() {
     if (listen(listen_sock_.get(), 10) == -1) {
       return false;
     }
-
-    pump_.Watch(listen_sock_.get(),
-                false,
-                ChannelPump::Mode::WATCH_READ,
-                static_cast<ChannelPump::Observer*>(this));
-    pump_.Run();
   } else if (option_.mode == Channel::Mode::CLIENT) {
     sock_.reset(fd);
 
@@ -66,11 +63,26 @@ bool ChannelIPv4::Init() {
   return true;
 }
 
+bool ChannelIPv4::Poll() {
+  if (option_.mode == Channel::Mode::SERVER) {
+    if (messenger_) {
+      messenger_->pump()->Watch(listen_sock_.get(),
+                  false,
+                  ChannelPump::Mode::WATCH_READ,
+                  static_cast<ChannelPump::Observer*>(this));
+      messenger_->mainloop()->PostTask(Task(std::bind(ChannelPump::Run,
+                                                        messenger_->pump())));
+    }
+  }
+  return true;
+}
+
 void ChannelIPv4::OnRead(int fd) {
   if (fd == listen_sock_.get()) {
     int len = sizeof(serv_addr_);
-    int tmp_fd = accept(listen_sock_.get(), (struct sockaddr*)&serv_addr_,
-                (socklen_t*)&len);
+    int tmp_fd = accept(listen_sock_.get(),
+                        (struct sockaddr*)&serv_addr_,
+                        (socklen_t*)&len);
     if (tmp_fd < 0) {
       LOG(ERROR) << _F("accept new connection failed.");
     } else {
@@ -87,6 +99,12 @@ void ChannelIPv4::OnRead(int fd) {
 
 void ChannelIPv4::OnWrite(int fd) {
 
+}
+
+void ChannelIPv4::AddWatcher(Messenger* messenger) {
+  if (messenger) {
+    messenger_ = messenger;
+  }
 }
 
 }

@@ -17,12 +17,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string>
+#include <memory>
 
 #include "framework/public/scoped_variable.h"
 #include "framework/channel/channel.h"
 #include "framework/channel/channel_pump_libevent.h"
 
 namespace framework {
+
+struct Messenger;
 
 struct ChannelIPv4 : public Channel,
                      public ChannelPump::Observer {
@@ -32,6 +35,8 @@ struct ChannelIPv4 : public Channel,
 
   void OnRead(int fd) override;
   void OnWrite(int fd) override;
+  void AddWatcher(Messenger* messenger) override;
+  bool Poll();
 
 private:
   bool Init();
@@ -45,6 +50,8 @@ private:
   scoped_fd sock_;
   scoped_fd listen_sock_;
   struct sockaddr_in serv_addr_;
+
+  Messenger* messenger_;
   ChannelPumpLibevent pump_;
 
 };
