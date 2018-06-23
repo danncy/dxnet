@@ -31,12 +31,12 @@ struct ChannelIPv4 : public Channel,
                      public ChannelPump::Observer {
 
   ChannelIPv4(const Channel::Option& option);
-  ~ChannelIPv4();
+  ~ChannelIPv4() override;
 
   void OnRead(int fd) override;
   void OnWrite(int fd) override;
   void AddWatcher(Messenger* messenger) override;
-  bool Poll();
+  bool StartWatching();
 
 private:
   bool Init();

@@ -11,8 +11,11 @@ Messenger::Messenger()
 bool Messenger::Watch(Channel* channel, std::shared_ptr<Delegate> delegate) {
   if (channel && delegate.get()) {
     channel->AddWatcher(this);
-    delegate_list_.push_back(delegate);
+    channel->StartWatching();
 
+    // delegate_list_ is for multi customers are intreseting with the channel.
+    // TODO
+    delegate_list_.push_back(delegate);
     return true;
   }
   return false;

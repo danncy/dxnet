@@ -44,6 +44,10 @@ void MainLoop::PostTask(Task task) {
   pending_task_queue_.push(std::move(task));
 }
 
+void MainLoop::PostTask(std::function<void()> closure) {
+  pending_task_queue_.push(std::move(Task(closure)));
+}
+
 void MainLoop::Start() {
   state_ = START;
 }

@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
     std::make_shared<MessengerDelegate>();
 
   messenger.Watch(&chn, delegate);
-  chn.Poll();
 
   framework::MainLoop mainloop;
   mainloop.Run();

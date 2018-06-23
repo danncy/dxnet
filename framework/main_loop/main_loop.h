@@ -4,6 +4,8 @@
 #include "task.h"
 #include "framework/public/time.h"
 
+#include <functional>
+
 namespace framework {
 
 /*
@@ -22,6 +24,7 @@ struct MainLoop {
   static MainLoop* current();
   void Run();
   void PostTask(Task task);
+  void PostTask(std::function<void()> closure);
 
   void Start();
   void Pause();

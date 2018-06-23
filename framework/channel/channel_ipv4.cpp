@@ -63,15 +63,15 @@ bool ChannelIPv4::Init() {
   return true;
 }
 
-bool ChannelIPv4::Poll() {
+bool ChannelIPv4::StartWatching() {
   if (option_.mode == Channel::Mode::SERVER) {
     if (messenger_) {
       messenger_->pump()->Watch(listen_sock_.get(),
                   false,
                   ChannelPump::Mode::WATCH_READ,
                   static_cast<ChannelPump::Observer*>(this));
-      messenger_->mainloop()->PostTask(Task(std::bind(ChannelPump::Run,
-                                                        messenger_->pump())));
+      messenger_->mainloop()->PostTask(
+        std::bind(ChannelPump::Run, messenger_->pump()));
     }
   }
   return true;

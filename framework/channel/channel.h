@@ -64,6 +64,7 @@ struct Channel {
   virtual ~Channel();
 
   virtual void AddWatcher(Messenger* messenger) = 0;
+  virtual bool StartWatching() = 0;
 
   int ErrorCode() const;
   std::string Error() const;
