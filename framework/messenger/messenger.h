@@ -4,9 +4,11 @@
 #include "message.h"
 #include "framework/channel/channel_pump_libevent.h"
 #include "framework/thread/thread.h"
+#include "framework/public/location.h"
 
 #include <list>
 #include <memory>
+#include <functional>
 
 namespace framework {
 
@@ -25,6 +27,9 @@ struct Messenger {
   };
 
   bool Watch(Channel* channel, std::shared_ptr<Delegate> delegate);
+  bool WatchFileDescriptor(int fd,
+    bool persistent, ChannelPump::Mode mode, ChannelPump::Observer* observer);
+  void PostTask(const Location& location, std::function<void()> func);
 
   ChannelPump* pump() {
     return static_cast<ChannelPump*>(&pump_);

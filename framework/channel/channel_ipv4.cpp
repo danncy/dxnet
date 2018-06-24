@@ -36,7 +36,7 @@ bool ChannelIPv4::Init() {
 
 bool ChannelIPv4::StartWatching() {
   if (messenger_) {
-    messenger_->mainloop()->PostTask(
+    messenger_->PostTask(FROM_HERE,
         std::bind(&ChannelPump::Run, messenger_->pump()));
   } else {
     LOG(ERROR) << _F("Messenger is not initialized for channel.");
@@ -49,7 +49,7 @@ bool ChannelIPv4::StartWatching() {
       return false;
     }
 
-    messenger_->pump()->Watch(server_fd_.GetFileDescriptor(),
+    messenger_->WatchFileDescriptor(server_fd_.GetFileDescriptor(),
                 false,
                 ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
@@ -59,7 +59,7 @@ bool ChannelIPv4::StartWatching() {
       return false;
     }
 
-    messenger_->pump()->Watch(client_fd_.GetFileDescriptor(),
+    messenger_->WatchFileDescriptor(client_fd_.GetFileDescriptor(),
                 true,
                 ChannelPump::Mode::WATCH_READ_WRITE,
                 static_cast<ChannelPump::Observer*>(this));

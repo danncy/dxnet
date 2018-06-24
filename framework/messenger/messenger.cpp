@@ -1,6 +1,7 @@
 #include "messenger.h"
 #include "framework/channel/channel.h"
 #include "framework/public/rand_util.h"
+#include "framework/public/logging.h"
 
 namespace framework {
 
@@ -20,6 +21,16 @@ bool Messenger::Watch(Channel* channel, std::shared_ptr<Delegate> delegate) {
     return true;
   }
   return false;
+}
+
+bool Messenger::WatchFileDescriptor(int fd,
+    bool persistent, ChannelPump::Mode mode, ChannelPump::Observer* observer) {
+  return pump_.Watch(fd, persistent, mode, observer);
+}
+
+void Messenger::PostTask(const Location& location, std::function<void()> func) {
+  LOG(INFO) << location.ToString();
+  worker_thread_.main_loop()->PostTask(func);
 }
 
 } //namespace framework
