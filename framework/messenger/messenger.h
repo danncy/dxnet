@@ -35,10 +35,6 @@ struct Messenger {
     return static_cast<ChannelPump*>(&pump_);
   }
 
-  MainLoop* mainloop() const {
-    return worker_thread_.main_loop();
-  }
-
 private:
   ChannelPumpLibevent pump_;
   Thread worker_thread_;
