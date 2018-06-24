@@ -83,12 +83,30 @@ void ChannelIPv4::OnRead(int fd) {
       }
       sock_.reset(tmp_fd);
       LOG(INFO) << _F("accept a connection");
+      messenger_->WatchFileDescriptor(sock_.get(), 
+                  true,
+                  ChannelPump::Mode::WATCH_READ,
+                  static_cast<ChannelPump::Observer*>(this));
     }
+  } else if (fd == sock_.get()) {
+    // TODO
+    // Delegate will handle the event.
+  } else if (fd == client_fd_.GetFileDescriptor()) {
+    // TODO
+    // Delegate will handle the event.
+  } else {
+    LOG(ERROR) << _F("Unknown socket: %1") % fd;
   }
 }
 
 void ChannelIPv4::OnWrite(int fd) {
-
+  if (fd == sock_.get()) {
+    // TODO
+    // Delegate will handle the event.
+  } else if (fd == client_fd_.GetFileDescriptor()) {
+    // TODO
+    // Delegate will handle the event.
+  }
 }
 
 void ChannelIPv4::AddWatcher(Messenger* messenger) {

@@ -52,8 +52,6 @@ private:
   scoped_fd sock_;
 
   Messenger* messenger_;
-  ChannelPumpLibevent pump_;
-
 };
 
 }//namespace framework
