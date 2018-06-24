@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../lib/libmessenger.a  CMakeFiles/messenger.dir/message.cpp.o CMakeFiles/messenger.dir/messenger.cpp.o
-/usr/bin/ranlib ../../lib/libmessenger.a

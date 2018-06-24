@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../lib/libmainloop.a  CMakeFiles/mainloop.dir/main_loop.cpp.o CMakeFiles/mainloop.dir/task.cpp.o
-/usr/bin/ranlib ../../lib/libmainloop.a

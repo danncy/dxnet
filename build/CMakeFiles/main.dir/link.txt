@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/main.dir/main.cpp.o  -o bin/main  -L/home/dancy/trunk/dxnet/build/lib  -L/home/dancy/trunk/dxnet/third_party/libevent/lib -Wl,-rpath,/home/dancy/trunk/dxnet/build/lib:/home/dancy/trunk/dxnet/third_party/libevent/lib lib/libpublic.a lib/libmainloop.a lib/libpublic.a lib/libthread.a -lpthread 

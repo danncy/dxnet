@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../lib/libthread.a  CMakeFiles/thread.dir/condition_variable.cpp.o CMakeFiles/thread.dir/lock.cpp.o CMakeFiles/thread.dir/thread.cpp.o CMakeFiles/thread.dir/thread_local.cpp.o
-/usr/bin/ranlib ../../lib/libthread.a

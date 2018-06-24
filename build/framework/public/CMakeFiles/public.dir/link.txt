@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../../lib/libpublic.a  CMakeFiles/public.dir/format.cpp.o CMakeFiles/public.dir/location.cpp.o CMakeFiles/public.dir/logging.cpp.o CMakeFiles/public.dir/rand_util.cpp.o CMakeFiles/public.dir/scoped_variable.cpp.o CMakeFiles/public.dir/time.cpp.o
-/usr/bin/ranlib ../../lib/libpublic.a
