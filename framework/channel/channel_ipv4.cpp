@@ -1,7 +1,4 @@
 #include "channel_ipv4.h"
-#include <cerrno>
-#include <cstring>
-#include <fcntl.h>
 #include <functional>
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
@@ -13,6 +10,9 @@ ChannelIPv4::ChannelIPv4(const Channel::Option& option)
   : Channel(option),
     option_(option),
     address_(option.sock_addr),
+    init_status_(false),
+    server_fd_(GetInAddr(), option.sock_port),
+    client_fd_(GetInAddr(), option.sock_port),
     messenger_(nullptr) {
   if (option_.mode == Channel::Mode::CLIENT &&
       address_.empty())
@@ -26,41 +26,12 @@ ChannelIPv4::ChannelIPv4(const Channel::Option& option)
 ChannelIPv4::~ChannelIPv4() {}
 
 bool ChannelIPv4::Init() {
-  LOG(INFO) << _F("ipv4 channel init.");
-  int fd = socket(AF_INET, option_.sock_type, 0);
-  if (-1 == fd)
-    return false;
-  if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
-    return false;
-
-  memset(&serv_addr_, 0, sizeof(serv_addr_));
- 
-  serv_addr_.sin_family = AF_INET;
-  serv_addr_.sin_addr.s_addr = htonl(GetInAddr());
-  serv_addr_.sin_port = htons(option_.sock_port);
- 
   if (option_.mode == Channel::Mode::SERVER) {
-    listen_sock_.reset(fd);
-    
-    if (bind(listen_sock_.get(),
-             (struct sockaddr*)&serv_addr_,
-             sizeof(serv_addr_)) == -1) {
-      return false;
-    }
-
-    if (listen(listen_sock_.get(), 10) == -1) {
-      return false;
-    }
+    init_status_ = server_fd_.Init();
   } else if (option_.mode == Channel::Mode::CLIENT) {
-    sock_.reset(fd);
-
-    if (connect(sock_.get(),
-                (struct sockaddr*)&serv_addr_,
-                sizeof(serv_addr_)) == -1) {
-      return false;
-    }
+    init_status_ = client_fd_.Init();
   }
-  return true;
+  return init_status_;
 }
 
 bool ChannelIPv4::StartWatching() {
@@ -73,22 +44,22 @@ bool ChannelIPv4::StartWatching() {
   }
 
   if (option_.mode == Channel::Mode::SERVER) {
-    if (!listen_sock_.IsValid()) {
+    if (!init_status_) {
       LOG(ERROR) << _F("channel init socket error in server mode.");
       return false;
     }
 
-    messenger_->pump()->Watch(listen_sock_.get(),
+    messenger_->pump()->Watch(server_fd_.GetFileDescriptor(),
                 false,
                 ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
   } else if (option_.mode == Channel::Mode::CLIENT) {
-    if (!sock_.IsValid()) {
+    if (!init_status_) {
       LOG(ERROR) << _F("channel init socket error in server mode.");
       return false;
     }
 
-    messenger_->pump()->Watch(sock_.get(),
+    messenger_->pump()->Watch(client_fd_.GetFileDescriptor(),
                 true,
                 ChannelPump::Mode::WATCH_READ_WRITE,
                 static_cast<ChannelPump::Observer*>(this));
@@ -97,10 +68,10 @@ bool ChannelIPv4::StartWatching() {
 }
 
 void ChannelIPv4::OnRead(int fd) {
-  if (fd == listen_sock_.get()) {
-    int len = sizeof(serv_addr_);
-    int tmp_fd = accept(listen_sock_.get(),
-                        (struct sockaddr*)&serv_addr_,
+  if (fd == server_fd_.GetFileDescriptor()) {
+    int len = sizeof(struct sockaddr_in);
+    int tmp_fd = accept(server_fd_.GetFileDescriptor(),
+                        (struct sockaddr*)server_fd_.GetSockAddr(),
                         (socklen_t*)&len);
     if (tmp_fd < 0) {
       LOG(ERROR) << _F("accept new connection failed.");

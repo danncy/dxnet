@@ -17,4 +17,4 @@ ADD_EXECUTABLE(main main.cpp)
 TARGET_LINK_LIBRARIES(main public mainloop public thread pthread)
 
 ADD_EXECUTABLE(adapterd adapterd.cpp)
-TARGET_LINK_LIBRARIES(adapterd public mainloop channel thread pthread event messenger public)
+TARGET_LINK_LIBRARIES(adapterd public mainloop channel networking thread pthread event messenger public)

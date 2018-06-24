@@ -12,16 +12,14 @@
 
 #ifndef FRAMEWORK_CHANNEL_IPV4_H_
 #define FRAMEWORK_CHANNEL_IPV4_H_
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+
 #include <string>
 #include <memory>
 
 #include "framework/public/scoped_variable.h"
 #include "framework/channel/channel.h"
 #include "framework/channel/channel_pump_libevent.h"
+#include "framework/networking/socket.h"
 
 namespace framework {
 
@@ -47,9 +45,11 @@ private:
 private:
   Channel::Option option_;
   std::string address_;
+  bool init_status_;
+
+  TcpServerFileDescriptor server_fd_;
+  TcpClientFileDescriptor client_fd_;
   scoped_fd sock_;
-  scoped_fd listen_sock_;
-  struct sockaddr_in serv_addr_;
 
   Messenger* messenger_;
   ChannelPumpLibevent pump_;
