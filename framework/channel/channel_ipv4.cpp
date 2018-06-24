@@ -87,12 +87,14 @@ void ChannelIPv4::OnRead(int fd) {
                   true,
                   ChannelPump::Mode::WATCH_READ,
                   static_cast<ChannelPump::Observer*>(this));
+      // TODO:
+      // Recv and handle the new socket's data.
     }
   } else if (fd == sock_.get()) {
-    // TODO
+    // TODO:
     // Delegate will handle the event.
   } else if (fd == client_fd_.GetFileDescriptor()) {
-    // TODO
+    // TODO:
     // Delegate will handle the event.
   } else {
     LOG(ERROR) << _F("Unknown socket: %1") % fd;

@@ -13,6 +13,9 @@ namespace {
                     in_addr_t addr,
                     int port,
                     struct sockaddr_in* serv_addr) {
+    if (!serv_addr)
+      return -1;
+
     scoped_fd fd;
     fd.reset(socket(family, type, 0));
     if (!fd.IsValid())
@@ -20,7 +23,8 @@ namespace {
 
     if (fcntl(fd.get(), F_SETFL, O_NONBLOCK) < 0)
       return -1;
-    
+
+    memset(serv_addr, 0, sizeof(*serv_addr));
     serv_addr->sin_family = family;
     serv_addr->sin_addr.s_addr = htonl(addr);
     serv_addr->sin_port = htons(port);
@@ -76,6 +80,34 @@ bool TcpClientFileDescriptor::DoInit() {
   }
 
   LOG(INFO) << _F("Tcp Client is connected to %1:%2") % inet_ntoa(serv_addr_.sin_addr) % port_;
+  return true;
+}
+
+UdpServerFileDescriptor::UdpServerFileDescriptor(in_addr_t addr, int port)
+  : SocketFileDescriptor(addr, port) {}
+
+bool UdpServerFileDescriptor::DoInit() {
+  fd_.reset(BuildSocketFD(AF_INET, SOCK_DGRAM, addr_, port_, &serv_addr_));
+  if (!fd_.IsValid())
+    return false;
+
+  if (bind(fd_.get(),
+           (struct sockaddr*)&serv_addr_,
+           sizeof(serv_addr_)) == -1)
+    return false;
+
+  LOG(INFO) << _F("Udp Server is initialized at %1:%2") % inet_ntoa(serv_addr_.sin_addr) % port_;
+  return true;
+}
+
+UdpClientFileDescriptor::UdpClientFileDescriptor(in_addr_t addr, int port)
+  : SocketFileDescriptor(addr, port) {}
+
+bool UdpClientFileDescriptor::DoInit() {
+  fd_.reset(BuildSocketFD(AF_INET, SOCK_DGRAM, addr_, port_, &serv_addr_));
+  if (!fd_.IsValid())
+    return false;
+
   return true;
 }
 

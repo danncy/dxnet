@@ -12,7 +12,7 @@ namespace framework {
 static const size_t kMaxSocketNameLength = 104;
 static const int kSocketMaxConn = 128;
 
-// build a fd with tcp stream socket.
+// build socket.
 struct SocketFileDescriptor {
   SocketFileDescriptor(in_addr_t addr, int port);
   virtual ~SocketFileDescriptor() = default;
@@ -47,6 +47,22 @@ protected:
 struct TcpClientFileDescriptor : public SocketFileDescriptor {
   TcpClientFileDescriptor(in_addr_t addr, int port);
   ~TcpClientFileDescriptor() = default;
+
+protected:
+  bool DoInit() override;
+};
+
+struct UdpServerFileDescriptor : public SocketFileDescriptor {
+  UdpServerFileDescriptor(in_addr_t addr, int port);
+  ~UdpServerFileDescriptor() = default;
+
+protected:
+  bool DoInit() override;
+};
+
+struct UdpClientFileDescriptor : public SocketFileDescriptor {
+  UdpClientFileDescriptor(in_addr_t addr, int port);
+  ~UdpClientFileDescriptor() = default;
 
 protected:
   bool DoInit() override;
