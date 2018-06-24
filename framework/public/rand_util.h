@@ -8,6 +8,7 @@
 namespace framework {
 
 std::string GenerateUniqueRandomProcId();
+int GenerateRandomNumber();
 
 } // namespace framework
 #endif
