@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libnetwork_adapter.a  CMakeFiles/network_adapter.dir/board.cpp.o CMakeFiles/network_adapter.dir/cabinet.cpp.o CMakeFiles/network_adapter.dir/port.cpp.o
+/usr/bin/ranlib ../lib/libnetwork_adapter.a

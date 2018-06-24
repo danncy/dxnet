@@ -66,7 +66,7 @@ bool ChannelIPv4::Init() {
 bool ChannelIPv4::StartWatching() {
   if (messenger_) {
     messenger_->mainloop()->PostTask(
-        std::bind(ChannelPump::Run, messenger_->pump()));
+        std::bind(&ChannelPump::Run, messenger_->pump()));
   } else {
     LOG(ERROR) << _F("Messenger is not initialized for channel.");
     return false;
