@@ -48,11 +48,17 @@ bool Thread::StartWithOptions(const Options& option) {
 
   int ret = pthread_create(&thread_id_, &attr, ThreadMain, this);
   LOG(INFO) << ret;
-  if (ret) {
+  if (ret != 0) {
     //log pthread_create failed.
     LOG(ERROR) << ret;
-    success = false;
+    return false;
   }
+#ifdef _GNU_SOURCE
+  ret = pthread_set_name_np(&thread_id_, name_.c_str());
+  if (ret != 0) {
+    LOG(ERROR) << ret;
+  }
+#endif
   pthread_attr_destroy(&attr);
 
   return success;
