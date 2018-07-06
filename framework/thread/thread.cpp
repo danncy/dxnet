@@ -51,6 +51,7 @@ bool Thread::StartWithOptions(const Options& option) {
   if (ret != 0) {
     //log pthread_create failed.
     LOG(ERROR) << ret;
+    pthread_attr_destroy(&attr);
     return false;
   }
 #ifdef _GNU_SOURCE
