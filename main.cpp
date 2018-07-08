@@ -7,6 +7,7 @@
 void log_test() {
   LOG(DEBUG) << "thread testing log.";
   LOG(DEBUG) << _F("thread testing %1 log %2.") % "%2" % "good!";
+  LOG(DEBUG) << _Fmt("%1,%2,%3,%1,%4", 1, "test", 9.1, "中国");
 }
 
 int main(int argc, char** argv) {
