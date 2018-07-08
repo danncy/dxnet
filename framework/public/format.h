@@ -1,5 +1,6 @@
 #ifndef FRAMEWORK_FORMAT_H_
 #define FRAMEWORK_FORMAT_H_
+#include <cctype>
 #include <string>
 #include <sstream>
 #include <unordered_map>
