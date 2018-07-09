@@ -80,7 +80,7 @@ struct TimeSlice {
   TimeSlice operator*(T a) const {
     int64_t result = timeslice_ * a;
     if (std::abs(result) < std::numeric_limits<int64_t>::max())
-      return result;
+      return TimeSlice(result);
 
     // Matched sign overflows. Mismatched sign underflows.
     if ((timeslice_ < 0) ^ (a < 0))
@@ -94,7 +94,7 @@ struct TimeSlice {
 
     int64_t result = timeslice_ / a;
     if (std::abs(result) < std::numeric_limits<int64_t>::max())
-      return result;
+      return TimeSlice(result);
 
     // Matched sign overflows. Mismatched sign underflows.
     // Special case to catch divide by zero.

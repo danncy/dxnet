@@ -55,7 +55,7 @@ bool Thread::StartWithOptions(const Options& option) {
     return false;
   }
 #ifdef _GNU_SOURCE
-  ret = pthread_set_name_np(&thread_id_, name_.c_str());
+  ret = pthread_setname_np(thread_id_, name_.c_str());
   if (ret != 0) {
     LOG(ERROR) << ret;
   }

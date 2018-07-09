@@ -10,7 +10,9 @@ namespace framework {
 struct DummyLogger {
   DummyLogger() {}
   template<typename T>
-  DummyLogger& operator<<(const T& info) {}
+  DummyLogger& operator<<(const T& info) {
+    return *this;
+  }
 };
 
 struct Logger : public DummyLogger {

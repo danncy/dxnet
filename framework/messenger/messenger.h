@@ -34,8 +34,8 @@ struct Messenger {
     Delegate() {}
     virtual ~Delegate() = default;
 
-    virtual bool OnRecv(const Message& msg) {};
-    virtual bool OnSend(Message* msg) {};
+    virtual bool OnRecv(const Message& msg) { return true; };
+    virtual bool OnSend(Message* msg) { return true; };
   };
 
   bool Watch(Channel* channel, std::shared_ptr<Delegate> delegate);
