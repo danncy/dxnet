@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "framework/public/format.h"
 
 namespace framework {
 
@@ -81,5 +82,15 @@ const LEVEL INFO  = ::framework::Logger::Level::Severity::INFO;
 const LEVEL WARN  = ::framework::Logger::Level::Severity::WARN;
 const LEVEL ERROR = ::framework::Logger::Level::Severity::ERROR;
 const LEVEL FATAL = ::framework::Logger::Level::Severity::FATAL;
+
+namespace Log {
+  using framework::Logger;
+  #define debug(fmt, ...) Logger(DEBUG, __FILE__, __LINE__) << _Fmt(fmt, __VA_ARGS__)
+  #define info(fmt, ...)  Logger(INFO, __FILE__, __LINE__) << _Fmt(fmt, __VA_ARGS__)
+  #define warn(fmt, ...)  Logger(WARN, __FILE__, __LINE__) << _Fmt(fmt, __VA_ARGS__)
+  #define error(fmt, ...) Logger(ERROR, __FILE__, __LINE__) << _Fmt(fmt, __VA_ARGS__)
+  #define fatal(fmt, ...) Logger(FATAL, __FILE__, __LINE__) << _Fmt(fmt, __VA_ARGS__)
+
+} // log
 
 #endif
