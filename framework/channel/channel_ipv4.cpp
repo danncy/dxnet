@@ -11,8 +11,6 @@ ChannelIPv4::ChannelIPv4(const Channel::Option& option)
     option_(option),
     address_(option.sock_addr),
     init_status_(false),
-    server_fd_(GetInAddr(), option.sock_port),
-    client_fd_(GetInAddr(), option.sock_port),
     messenger_(nullptr) {
   if (option_.mode == Channel::Mode::CLIENT &&
       address_.empty())
@@ -27,9 +25,21 @@ ChannelIPv4::~ChannelIPv4() {}
 
 bool ChannelIPv4::Init() {
   if (option_.mode == Channel::Mode::SERVER) {
-    init_status_ = server_fd_.Init();
+    if (option_.sock_type == SOCK_STREAM)
+      serv_fd_.reset(new TcpServerFileDescriptor(GetInAddr(),
+          option_.sock_port));
+    else
+      serv_fd_.reset(new UdpServerFileDescriptor(GetInAddr(),
+          option_.sock_port));
+    init_status_ = serv_fd_->Init();
   } else if (option_.mode == Channel::Mode::CLIENT) {
-    init_status_ = client_fd_.Init();
+    if (option_.sock_type == SOCK_STREAM)
+      clnt_fd_.reset(new TcpServerFileDescriptor(GetInAddr(),
+          option_.sock_port));
+    else
+      clnt_fd_.reset(new UdpServerFileDescriptor(GetInAddr(),
+          option_.sock_port));
+    init_status_ = clnt_fd_->Init();
   }
   return init_status_;
 }
@@ -49,7 +59,7 @@ bool ChannelIPv4::StartWatching() {
       return false;
     }
 
-    messenger_->WatchFileDescriptor(server_fd_.GetFileDescriptor(),
+    messenger_->WatchFileDescriptor(serv_fd_->GetFileDescriptor(),
                 false,
                 ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
@@ -59,7 +69,7 @@ bool ChannelIPv4::StartWatching() {
       return false;
     }
 
-    messenger_->WatchFileDescriptor(client_fd_.GetFileDescriptor(),
+    messenger_->WatchFileDescriptor(clnt_fd_->GetFileDescriptor(),
                 true,
                 ChannelPump::Mode::WATCH_READ_WRITE,
                 static_cast<ChannelPump::Observer*>(this));
@@ -67,33 +77,45 @@ bool ChannelIPv4::StartWatching() {
   return true;
 }
 
-void ChannelIPv4::OnRead(int fd) {
-  if (fd == server_fd_.GetFileDescriptor()) {
-    int len = sizeof(struct sockaddr_in);
-    int tmp_fd = accept(server_fd_.GetFileDescriptor(),
-                        (struct sockaddr*)server_fd_.GetSockAddr(),
-                        (socklen_t*)&len);
-    if (tmp_fd < 0) {
-      LOG(ERROR) << _F("accept new connection failed.");
-    } else {
-      if (sock_.IsValid()) {
-        LOG(ERROR) << _F("don't support multi client, will todo in future.");
-        close(tmp_fd);
-        return;
-      }
-      sock_.reset(tmp_fd);
-      LOG(INFO) << _F("accept a connection");
-      messenger_->WatchFileDescriptor(sock_.get(), 
-                  true,
-                  ChannelPump::Mode::WATCH_READ,
-                  static_cast<ChannelPump::Observer*>(this));
-      // TODO:
-      // Recv and handle the new socket's data.
+void ChannelIPv4::TcpAcceptConnection() {
+  int len = sizeof(struct sockaddr_in);
+  int tmp_fd = accept(serv_fd_->GetFileDescriptor(),
+                      (struct sockaddr*)serv_fd_->GetSockAddr(),
+                      (socklen_t*)&len);
+  if (tmp_fd < 0) {
+    LOG(ERROR) << _F("accept new connection failed.");
+  } else {
+    if (sock_.IsValid()) {
+      LOG(ERROR) << _F("don't support multi client, will todo in future.");
+      close(tmp_fd);
+      return;
     }
+    sock_.reset(tmp_fd);
+    LOG(INFO) << _F("accept a connection");
+    messenger_->WatchFileDescriptor(sock_.get(),
+                true,
+                ChannelPump::Mode::WATCH_READ,
+                static_cast<ChannelPump::Observer*>(this));
+    // TODO:
+    // Recv and handle the new socket's data.
+  }
+}
+
+void ChannelIPv4::UdpServerRead() {
+  //TODO
+  // recvfrom will using.
+}
+
+void ChannelIPv4::OnRead(int fd) {
+  if (fd == serv_fd_->GetFileDescriptor()) {
+    if (option_.sock_type == SOCK_STREAM)
+      TcpAcceptConnection();
+    else if (option_.sock_type == SOCK_DGRAM)
+      UdpServerRead();
   } else if (fd == sock_.get()) {
     // TODO:
     // Delegate will handle the event.
-  } else if (fd == client_fd_.GetFileDescriptor()) {
+  } else if (fd == clnt_fd_->GetFileDescriptor()) {
     // TODO:
     // Delegate will handle the event.
   } else {
@@ -105,7 +127,7 @@ void ChannelIPv4::OnWrite(int fd) {
   if (fd == sock_.get()) {
     // TODO
     // Delegate will handle the event.
-  } else if (fd == client_fd_.GetFileDescriptor()) {
+  } else if (fd == clnt_fd_->GetFileDescriptor()) {
     // TODO
     // Delegate will handle the event.
   }

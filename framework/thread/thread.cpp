@@ -1,6 +1,7 @@
 #include "thread.h"
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
+#include <cstring>
 
 namespace framework {
 
@@ -55,9 +56,15 @@ bool Thread::StartWithOptions(const Options& option) {
     return false;
   }
 #ifdef _GNU_SOURCE
-  ret = pthread_setname_np(thread_id_, name_.c_str());
+  ret = pthread_setname_np(thread_id_, name_.substr(0,15).c_str());
   if (ret != 0) {
-    LOG(ERROR) << ret;
+    char thread_name[16] = {0};
+    pthread_getname_np(thread_id_, thread_name, 16);
+    Log::error("%1,%2,%3,%4", ret, name_, std::strerror(ret), thread_name);
+  } else {
+    char thread_name[16] = {0};
+    pthread_getname_np(thread_id_, thread_name, 16);
+    Log::info("%1,%2,%3,%4", ret, name_, std::strerror(ret), thread_name);
   }
 #endif
   pthread_attr_destroy(&attr);

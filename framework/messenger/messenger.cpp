@@ -6,7 +6,7 @@
 namespace framework {
 
 Messenger::Messenger()
-  : worker_thread_(std::string("worker.") + GenerateUniqueRandomProcId()) {
+  : worker_thread_(std::string("th.") + GenerateUniqueRandomProcId()) {
     worker_thread_.Start();
   }
 

@@ -41,14 +41,16 @@ private:
   in_addr_t GetInAddr() const {
     return address_.empty() ? INADDR_ANY : inet_addr(address_.c_str());
   }
+  void TcpAcceptConnection();
+  void UdpServerRead();
 
 private:
   Channel::Option option_;
   std::string address_;
   bool init_status_;
 
-  TcpServerFileDescriptor server_fd_;
-  TcpClientFileDescriptor client_fd_;
+  std::unique_ptr<SocketFileDescriptor> serv_fd_;
+  std::unique_ptr<SocketFileDescriptor> clnt_fd_;
   scoped_fd sock_;
 
   Messenger* messenger_;
