@@ -37,8 +37,7 @@ struct ChannelPumpLibevent : public ChannelPump {
   void UnWatch(int fd) override;
 private:
   event_base* evt_base_;
-  std::unique_ptr<event> evt_;
-  std::map<int, event*> evt_map_;
+  std::map<int, std::unique_ptr<event>> evt_map_;
 };
 }//namespace framework
 

@@ -5,21 +5,15 @@
 namespace framework {
 
 ChannelPumpLibevent::ChannelPumpLibevent()
-  : evt_base_(event_base_new()),
-    evt_(nullptr)
+  : evt_base_(event_base_new())
 {}
 
 ChannelPumpLibevent::~ChannelPumpLibevent() {
-  if (evt_) {
-    event_del(evt_.get());
-    evt_.reset();
+  for (auto& it : evt_map_) {
+    event_del(it.second.get());
+    it.second.reset();
   }
-
-  for (auto it : evt_map_) {
-    event_del(it.second);
-    delete it.second;
-    //it.second.reset();
-  }
+  evt_map_.clear();
 
   event_base_loopbreak(evt_base_);
   event_base_free(evt_base_);
@@ -63,27 +57,26 @@ bool ChannelPumpLibevent::Watch(int fd,
   if (event_mode & static_cast<int>(ChannelPump::Mode::WATCH_WRITE))
     event_mask |= EV_WRITE;
 
-  //evt_.reset(new event);
-  event* evt = new event;
-  event_set(evt, fd, event_mask, OnNotify, observer);
+  std::unique_ptr<event> evt(new event);
+  event_set(evt.get(), fd, event_mask, OnNotify, observer);
 
-  if (event_base_set(evt_base_, evt)) {
+  if (event_base_set(evt_base_, evt.get())) {
     return false;
   }
 
-  if (event_add(evt, nullptr)) {
+  if (event_add(evt.get(), nullptr)) {
     return false;
   }
 
-  evt_map_.insert(std::make_pair(fd, evt));
+  evt_map_.insert(std::make_pair(fd, std::move(evt)));
   return true;
 }
 
 void ChannelPumpLibevent::UnWatch(int fd) {
   auto it = evt_map_.find(fd);
   if (it != evt_map_.end()) {
-    event_del(it->second);
-    delete it->second;
+    event_del(it->second.get());
+    it->second.reset();
   }
   evt_map_.erase(it);
 }
