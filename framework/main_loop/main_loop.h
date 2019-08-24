@@ -3,8 +3,10 @@
 
 #include "task.h"
 #include "framework/public/time.h"
+#include "framework/channel/channel_pump.h"
 
 #include <functional>
+#include <memory>
 
 namespace framework {
 
@@ -23,6 +25,8 @@ struct MainLoop {
 
   static MainLoop* current();
   void Run();
+  void RunWith(std::unique_ptr<ChannelPump> pump);
+
   void PostTask(Task task);
   void PostTask(std::function<void()> closure);
 
@@ -34,6 +38,7 @@ struct MainLoop {
 private:
   TaskQueue pending_task_queue_;
   State state_;
+  std::unique_ptr<ChannelPump> pump_;
 };
 
 } // namespace framework

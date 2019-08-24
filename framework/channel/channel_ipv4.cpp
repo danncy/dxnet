@@ -1,5 +1,8 @@
 #include "channel_ipv4.h"
 #include <functional>
+#include <cstring>
+#include <unistd.h>
+
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
 #include "framework/messenger/messenger.h"
@@ -60,7 +63,7 @@ bool ChannelIPv4::StartWatching() {
     }
 
     messenger_->WatchFileDescriptor(serv_fd_->GetFileDescriptor(),
-                false,
+                true,
                 ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
   } else if (option_.mode == Channel::Mode::CLIENT) {
@@ -78,6 +81,7 @@ bool ChannelIPv4::StartWatching() {
 }
 
 void ChannelIPv4::TcpAcceptConnection() {
+  LOG(INFO) << _F("enter TcpAcceptConnection");
   int len = sizeof(struct sockaddr_in);
   int tmp_fd = accept(serv_fd_->GetFileDescriptor(),
                       (struct sockaddr*)serv_fd_->GetSockAddr(),
@@ -115,6 +119,18 @@ void ChannelIPv4::OnRead(int fd) {
   } else if (fd == sock_.get()) {
     // TODO:
     // Delegate will handle the event.
+    char buf[2048] = {0};
+    ssize_t n = read(fd, buf, sizeof(buf));
+    if (n < 0) {
+      LOG(ERROR) << _F("read failed, sockt fd: %1") % fd;
+    } 
+    
+    if (strncmp("quit", buf, strlen("quit")) == 0) {
+      sock_.reset();
+      messenger_->pump()->UnWatch(fd);
+    } else {
+      write(fd, buf, strlen(buf));
+    }
   } else if (fd == clnt_fd_->GetFileDescriptor()) {
     // TODO:
     // Delegate will handle the event.

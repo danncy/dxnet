@@ -30,7 +30,9 @@ struct ChannelPump {
   };
 
   virtual void Run() = 0;
+  virtual void RunAsync() = 0;
   virtual bool Watch(int fd, bool persistent, Mode mode, Observer* observer) = 0;
+  virtual void UnWatch(int fd) = 0;
 };
 
 }//namespace framework

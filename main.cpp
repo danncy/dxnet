@@ -2,6 +2,7 @@
 #include "framework/public/format.h"
 #include "framework/thread/thread.h"
 #include "framework/main_loop/main_loop.h"
+#include "framework/channel/channel_pump_libevent.h"
 #include <functional>
 
 void log_test() {
@@ -31,7 +32,7 @@ int main(int argc, char** argv) {
         })));
 
   framework::MainLoop mainloop;
-  mainloop.Run();
+  mainloop.RunWith(std::make_unique<framework::ChannelPumpLibevent>());
 
   return 0;
 }

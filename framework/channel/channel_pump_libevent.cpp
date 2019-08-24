@@ -14,11 +14,22 @@ ChannelPumpLibevent::~ChannelPumpLibevent() {
     event_del(evt_.get());
     evt_.reset();
   }
+
+  for (auto it : evt_map_) {
+    event_del(it.second);
+    delete it.second;
+    //it.second.reset();
+  }
+
   event_base_loopbreak(evt_base_);
   event_base_free(evt_base_);
 }
 
 void ChannelPumpLibevent::Run() {
+  event_base_loop(evt_base_, EVLOOP_NO_EXIT_ON_EMPTY);
+}
+
+void ChannelPumpLibevent::RunAsync() {
   for(;;) {
     event_base_loop(evt_base_, EVLOOP_NONBLOCK);
   }
@@ -52,16 +63,29 @@ bool ChannelPumpLibevent::Watch(int fd,
   if (event_mode & static_cast<int>(ChannelPump::Mode::WATCH_WRITE))
     event_mask |= EV_WRITE;
 
-  evt_.reset(new event);
-  event_set(evt_.get(), fd, event_mask, OnNotify, observer);
+  //evt_.reset(new event);
+  event* evt = new event;
+  event_set(evt, fd, event_mask, OnNotify, observer);
 
-  if (event_base_set(evt_base_, evt_.get())) {
+  if (event_base_set(evt_base_, evt)) {
     return false;
   }
 
-  if (event_add(evt_.get(), nullptr)) {
+  if (event_add(evt, nullptr)) {
     return false;
   }
+
+  evt_map_.insert(std::make_pair(fd, evt));
   return true;
 }
+
+void ChannelPumpLibevent::UnWatch(int fd) {
+  auto it = evt_map_.find(fd);
+  if (it != evt_map_.end()) {
+    event_del(it->second);
+    delete it->second;
+  }
+  evt_map_.erase(it);
+}
+
 }

@@ -14,6 +14,7 @@
 
 #include "framework/channel/channel_pump.h"
 #include <memory>
+#include <map>
 
 struct event_base;
 struct event;
@@ -22,18 +23,22 @@ namespace framework {
 
 struct ChannelPumpLibevent : public ChannelPump {
   ChannelPumpLibevent();
-  ~ChannelPumpLibevent();
+  virtual ~ChannelPumpLibevent();
 
   void Run() override;
+  void RunAsync() override;
   static void OnNotify(int fd, short flags, void* observer);
 
   bool Watch(int fd,
              bool persistent,
              ChannelPump::Mode mode,
              ChannelPump::Observer* observer) override;
+
+  void UnWatch(int fd) override;
 private:
   event_base* evt_base_;
   std::unique_ptr<event> evt_;
+  std::map<int, event*> evt_map_;
 };
 }//namespace framework
 
