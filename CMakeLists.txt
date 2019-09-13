@@ -14,7 +14,7 @@ ADD_SUBDIRECTORY(network_adapter)
 
 LINK_DIRECTORIES(${PROJECT_BINARY_DIR}/lib ${PROJECT_SOURCE_DIR}/third_party/libevent/lib/)
 ADD_EXECUTABLE(main main.cpp)
-TARGET_LINK_LIBRARIES(main public mainloop public thread pthread channel networking event)
+TARGET_LINK_LIBRARIES(main framework pthread event)
 
 ADD_EXECUTABLE(adapterd adapterd.cpp)
-TARGET_LINK_LIBRARIES(adapterd public mainloop channel networking thread pthread event messenger public)
+TARGET_LINK_LIBRARIES(adapterd framework pthread event)
