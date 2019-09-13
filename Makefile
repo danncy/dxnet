@@ -1,7 +1,7 @@
 curent_dir=$(shell pwd)
 libevent_dir := $$(dirname $(wildcard ${curent_dir}/third_party/libevent*/configure))
 
-.PHONY : all build-dir build-src build-libevent clean
+.PHONY : all build-dir build-src build-libevent clean clean-libevent
 
 all:
 	$(MAKE) build-libevent
@@ -30,13 +30,14 @@ build-libevent: build-dir
 	then \
 		cd ${libevent_dir} && make -j4; \
 	else \
-		cd ${libevent_dir} && ./configure && make; \
+		cd ${libevent_dir} && ./configure && make -j4; \
 	fi
 
 	@install -d ${curent_dir}/build/lib
-	@install -d ${curent_dir}/build/libevent/include
+	@install -d ${curent_dir}/build/third_party/libevent/include
 	@install ${libevent_dir}/.libs/*.a ${curent_dir}/build/lib/
 	@install ${libevent_dir}/.libs/*.so* ${curent_dir}/build/lib/
-	@cp -rf ${libevent_dir}/include/* ${curent_dir}/build/libevent/include
+	@cp -rf ${libevent_dir}/include/* ${curent_dir}/build/third_party/libevent/include
 
+clean-libevent:
 	@cd ${libevent_dir} && make clean
