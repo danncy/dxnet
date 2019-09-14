@@ -35,6 +35,14 @@ struct ChannelPumpLibevent : public ChannelPump {
              ChannelPump::Observer* observer) override;
 
   void UnWatch(int fd) override;
+
+  /**
+   * @brief Get the Event Map Size object
+   *
+   * @return int
+   */
+  int GetEventMapSize() const { return evt_map_.size(); }
+
 private:
   event_base* evt_base_;
   std::map<int, std::unique_ptr<event>> evt_map_;

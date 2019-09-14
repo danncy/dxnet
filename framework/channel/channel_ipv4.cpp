@@ -12,12 +12,10 @@ namespace framework {
 ChannelIPv4::ChannelIPv4(const Channel::Option& option)
   : Channel(option),
     option_(option),
-    address_(option.sock_addr),
     init_status_(false),
     messenger_(nullptr) {
-  if (option_.mode == Channel::Mode::CLIENT &&
-      address_.empty())
-    address_ = "127.0.0.1";
+  if (option_.mode == Channel::Mode::CLIENT && option_.sock_addr.empty())
+    option_.sock_addr = "127.0.0.1";
 
   if (!Init()) {
     LOG(ERROR) << _F("Channel failed, errno is %1, info: %2") % errno % Error();
@@ -29,18 +27,18 @@ ChannelIPv4::~ChannelIPv4() {}
 bool ChannelIPv4::Init() {
   if (option_.mode == Channel::Mode::SERVER) {
     if (option_.sock_type == SOCK_STREAM)
-      serv_fd_.reset(new TcpServerFileDescriptor(GetInAddr(),
+      serv_fd_.reset(new TcpServerFileDescriptor(GetInAddr(option_),
           option_.sock_port));
     else
-      serv_fd_.reset(new UdpServerFileDescriptor(GetInAddr(),
+      serv_fd_.reset(new UdpServerFileDescriptor(GetInAddr(option_),
           option_.sock_port));
     init_status_ = serv_fd_->Init();
   } else if (option_.mode == Channel::Mode::CLIENT) {
     if (option_.sock_type == SOCK_STREAM)
-      clnt_fd_.reset(new TcpServerFileDescriptor(GetInAddr(),
+      clnt_fd_.reset(new TcpServerFileDescriptor(GetInAddr(option_),
           option_.sock_port));
     else
-      clnt_fd_.reset(new UdpServerFileDescriptor(GetInAddr(),
+      clnt_fd_.reset(new UdpServerFileDescriptor(GetInAddr(option_),
           option_.sock_port));
     init_status_ = clnt_fd_->Init();
   }
@@ -123,8 +121,8 @@ void ChannelIPv4::OnRead(int fd) {
     ssize_t n = read(fd, buf, sizeof(buf));
     if (n < 0) {
       LOG(ERROR) << _F("read failed, sockt fd: %1") % fd;
-    } 
-    
+    }
+
     if (strncmp("quit", buf, strlen("quit")) == 0) {
       sock_.reset();
       messenger_->pump()->UnWatch(fd);

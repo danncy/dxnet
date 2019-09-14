@@ -12,6 +12,8 @@
 #ifndef FRAMEWORK_CHANNEL_PUMP_H_
 #define FRAMEWORK_CHANNEL_PUMP_H_
 
+#include <type_traits>
+
 namespace framework {
 
 struct ChannelPump {
@@ -34,6 +36,12 @@ struct ChannelPump {
   virtual bool Watch(int fd, bool persistent, Mode mode, Observer* observer) = 0;
   virtual void UnWatch(int fd) = 0;
 };
+
+template <typename Enumeration>
+auto AsInt(Enumeration const value) -> typename std::underlying_type<Enumeration>::type
+{
+  return static_cast<typename std::underlying_type<Enumeration>::type>(value);
+}
 
 }//namespace framework
 #endif

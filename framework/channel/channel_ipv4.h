@@ -35,18 +35,16 @@ struct ChannelIPv4 : public Channel,
   void OnWrite(int fd) override;
   void AddWatcher(Messenger* messenger) override;
   bool StartWatching();
+  bool IsValid() const override { return init_status_; }
 
 private:
   bool Init();
-  in_addr_t GetInAddr() const {
-    return address_.empty() ? INADDR_ANY : inet_addr(address_.c_str());
-  }
+
   void TcpAcceptConnection();
   void UdpServerRead();
 
 private:
   Channel::Option option_;
-  std::string address_;
   bool init_status_;
 
   std::unique_ptr<SocketFileDescriptor> serv_fd_;

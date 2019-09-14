@@ -15,6 +15,8 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string>
 
 namespace framework {
@@ -60,6 +62,14 @@ struct Channel {
     {}
   };
 
+  struct Delegate {
+    Delegate() {}
+    virtual ~Delegate() = default;
+
+    virtual bool OnRecv(const char* msg, int len) { return true; };
+    virtual bool OnSend(const char* msg, int len) { return true; };
+  };
+
   Channel(const Option& option);
   virtual ~Channel();
 
@@ -68,6 +78,8 @@ struct Channel {
 
   int ErrorCode() const;
   std::string Error() const;
+  in_addr_t GetInAddr(const Channel::Option& option) const;
+  virtual bool IsValid() const { return false; }
 };
 
 }//namespace framework
