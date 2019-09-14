@@ -12,7 +12,7 @@ Server::~Server() {}
 void Server::Run() {
   framework::Channel::Option opt(framework::Channel::Type::SOCK_INET);
   opt.sock_type = SOCK_STREAM;
-  opt.sock_port = 7000;
+  opt.sock_port = 9995;
   opt.delegate  = msg_;
   framework::ChannelCli cli(opt);
 

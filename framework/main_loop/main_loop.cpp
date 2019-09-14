@@ -42,6 +42,7 @@ void MainLoop::Run() {
 
 void MainLoop::RunWithPump() {
   if (pump_) {
+    LOG(INFO) << _F("MainLoop run with pump");
     pump_->Run();
   }
 }
