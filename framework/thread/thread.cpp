@@ -46,7 +46,7 @@ bool Thread::StartWithOptions(const Options& option) {
   pthread_attr_init(&attr);
   bool success = true;
 
-  if (!option.pump)
+  if (option.pump)
     main_loop_->SetChannelPump(option.pump);
 
   if (option.detached)
