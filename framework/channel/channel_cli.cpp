@@ -62,7 +62,8 @@ void ChannelCli::OnRead(int fd) {
 }
 
 void ChannelCli::OnWrite(int fd) {
-  //LOG(INFO) << _F("a write event arrived, fd = %1.") % fd;
+  if (delegate_)
+    delegate_->OnSend(fd);
 }
 
 void ChannelCli::Accept() {

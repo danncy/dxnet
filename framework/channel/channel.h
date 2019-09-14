@@ -44,7 +44,7 @@ struct Channel {
     virtual ~Delegate() = default;
 
     virtual bool OnRecv(const char* msg, int len) { return true; };
-    virtual bool OnSend(const char* msg, int len) { return true; };
+    virtual bool OnSend(int fd) { return true; };
   };
 
   struct Option {
