@@ -4,7 +4,7 @@
 namespace cli {
 
 Server::Server()
-  : msg_(std::make_shared<CliMessage>()),
+  : msg_(std::make_shared<Message>()),
     thread_(new framework::Thread("cli-thread")) {
     framework::Channel::Option opt(framework::Channel::Type::SOCK_INET);
     opt.sock_type = SOCK_STREAM;

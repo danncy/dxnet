@@ -1,4 +1,4 @@
-#include "cli_message.h"
+#include "message.h"
 #include <string.h>
 #include <assert.h>
 #include <unistd.h>
@@ -8,11 +8,11 @@
 
 namespace cli {
 
-CliMessage::CliMessage() {}
+Message::Message() {}
 
-CliMessage::~CliMessage() {}
+Message::~Message() {}
 
-bool CliMessage::OnRecv(const char* msg, int len) {
+bool Message::OnRecv(const char* msg, int len) {
   assert(msg);
 
   if (strncmp(msg, "quit", strlen("quit")) == 0) {
@@ -26,7 +26,7 @@ bool CliMessage::OnRecv(const char* msg, int len) {
   return true;
 }
 
-bool CliMessage::OnSend(int fd) {
+bool Message::OnSend(int fd) {
   if (queue_.empty())
     return false;
 

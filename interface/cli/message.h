@@ -7,10 +7,10 @@
 
 namespace cli {
 
-struct CliMessage : public framework::Channel::Delegate {
+struct Message : public framework::Channel::Delegate {
 
-  CliMessage();
-  ~CliMessage();
+  Message();
+  ~Message();
 
   bool OnRecv(const char* msg, int len) override;
   bool OnSend(int fd) override;
