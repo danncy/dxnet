@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <time.h>
 #include "framework/thread/thread_local.h"
+#include "framework/public/logging.h"
+#include "framework/public/format.h"
 
 namespace framework {
 
