@@ -26,15 +26,19 @@ clean:
 	@echo "make clean ok"
 
 build-libevent: build-dir
-	@if [ ! -f "${curent_dir}/build/lib/libevent.so" && -f "${libevent_dir}/Makefile" ]; \
+	@if [ ! -f "${curent_dir}/build/lib/libevent.so" ] && [ -f "${libevent_dir}/Makefile" ]; \
 	then \
 		cd ${libevent_dir} && make -j4; \
-		${MAKE} install-libevent; \
-	elif [ ! -f "${curent_dir}/build/lib/libevent.so" ]; then \
+	elif [ ! -f "${curent_dir}/build/lib/libevent.so" ]; \
+	then \
 		cd ${libevent_dir} && ./configure && make -j4; \
-		${MAKE} install-libevent; \
 	else \
 		echo "libevent is installed"; \
+	fi
+
+	@if [ ! -f "${curent_dir}/build/lib/libevent.so" ]; \
+	then \
+		${MAKE} install-libevent; \
 	fi
 
 install-libevent:
@@ -43,6 +47,7 @@ install-libevent:
 	@install ${libevent_dir}/.libs/*.a ${curent_dir}/build/lib/
 	@install ${libevent_dir}/.libs/*.so* ${curent_dir}/build/lib/
 	@cp -rf ${libevent_dir}/include/* ${curent_dir}/build/third_party/libevent/include
+	@echo "libevent install successfully"
 
 clean-libevent:
 	@cd ${libevent_dir} && make clean
