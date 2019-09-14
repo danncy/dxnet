@@ -14,7 +14,7 @@ CliMessage::~CliMessage() {}
 bool CliMessage::OnRecv(const char* msg, int len) {
   assert(msg);
 
-  if (strcmp(msg, "quit") == 0) {
+  if (strncmp(msg, "quit", strlen("quit")) == 0) {
     return false;
   }
 
