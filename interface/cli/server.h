@@ -3,6 +3,7 @@
 
 #include "framework/channel/channel_cli.h"
 #include "interface/cli/cli_message.h"
+#include "framework/thread/thread.h"
 
 namespace cli {
 
@@ -17,7 +18,9 @@ struct Server {
 
 private:
   std::shared_ptr<CliMessage> msg_;
+  std::unique_ptr<framework::Thread> thread_;
   std::unique_ptr<framework::ChannelCli> cli_;
+
 };
 
 } // namespace cli
