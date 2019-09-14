@@ -15,8 +15,14 @@ Thread::~Thread() {
 }
 
 void Thread::Mainloop() {
-  if (main_loop_)
+  if (!main_loop_)
+    return;
+
+  if (main_loop_->HasPump()) {
+    main_loop_->RunWithPump();
+  } else {
     main_loop_->Run();
+  }
 }
 
 bool Thread::Start() {
@@ -39,6 +45,9 @@ bool Thread::StartWithOptions(const Options& option) {
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   bool success = true;
+
+  if (!option.pump)
+    main_loop_->SetChannelPump(option.pump);
 
   if (option.detached)
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);

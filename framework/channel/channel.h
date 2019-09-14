@@ -18,10 +18,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string>
+#include <memory>
 
 namespace framework {
 
 struct Messenger;
+struct ChannelPump;
 
 struct Channel {
   enum class Type : int {
@@ -37,6 +39,14 @@ struct Channel {
     CLIENT,
   };
 
+  struct Delegate {
+    Delegate() {}
+    virtual ~Delegate() = default;
+
+    virtual bool OnRecv(const char* msg, int len) { return true; };
+    virtual bool OnSend(const char* msg, int len) { return true; };
+  };
+
   struct Option {
     Channel::Type channel_type;
     Channel::Mode mode = Mode::SERVER;
@@ -44,6 +54,7 @@ struct Channel {
     int sock_proto = 0;
     int sock_port  = 8888;
     std::string sock_addr;
+    std::shared_ptr<Delegate> delegate;
 
     Option(Channel::Type type) : channel_type(type) {}
     Option(Channel::Type type, Channel::Mode cmode)
@@ -62,19 +73,12 @@ struct Channel {
     {}
   };
 
-  struct Delegate {
-    Delegate() {}
-    virtual ~Delegate() = default;
-
-    virtual bool OnRecv(const char* msg, int len) { return true; };
-    virtual bool OnSend(const char* msg, int len) { return true; };
-  };
-
-  Channel(const Option& option);
+  explicit Channel(const Option& option);
   virtual ~Channel();
 
   virtual void AddWatcher(Messenger* messenger) = 0;
   virtual bool StartWatching() = 0;
+  virtual std::shared_ptr<ChannelPump> pump() = 0;
 
   int ErrorCode() const;
   std::string Error() const;

@@ -17,7 +17,7 @@ struct Server {
   void Run();
 
 private:
-  CliMessage msg_;
+  std::shared_ptr<CliMessage> msg_;
   std::unique_ptr<framework::ChannelCli> cli_;
 };
 

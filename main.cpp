@@ -3,6 +3,7 @@
 #include "framework/thread/thread.h"
 #include "framework/main_loop/main_loop.h"
 #include "framework/channel/channel_pump_libevent.h"
+#include "interface/cli/server.h"
 #include <functional>
 
 void log_test() {
@@ -31,8 +32,12 @@ int main(int argc, char** argv) {
     LOG(DEBUG) << "thread testing.\n";
         })));
 
+  cli::Server serv;
+  serv.Run();
+
   framework::MainLoop mainloop;
-  mainloop.RunWith(std::make_unique<framework::ChannelPumpLibevent>());
+  mainloop.SetChannelPump(std::make_unique<framework::ChannelPumpLibevent>());
+  mainloop.RunWithPump();
 
   return 0;
 }

@@ -11,7 +11,7 @@ namespace {
 
 MainLoop::MainLoop()
   : state_(START) {
-  g_main_loop_tls.Set(this);  
+  g_main_loop_tls.Set(this);
 }
 
 MainLoop::~MainLoop() {
@@ -40,11 +40,7 @@ void MainLoop::Run() {
   }
 }
 
-void MainLoop::RunWith(std::unique_ptr<ChannelPump> pump = nullptr) {
-  if (pump) {
-    pump_.reset(pump.release());
-  }
-  
+void MainLoop::RunWithPump() {
   if (pump_) {
     pump_->Run();
   }

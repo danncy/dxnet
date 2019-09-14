@@ -14,7 +14,7 @@
 #define FRAMEWORK_MESSENGER_H_
 
 #include "message.h"
-#include "framework/channel/channel_pump_libevent.h"
+#include "framework/channel/channel_pump.h"
 #include "framework/thread/thread.h"
 #include "framework/public/location.h"
 
@@ -43,12 +43,12 @@ struct Messenger {
     bool persistent, ChannelPump::Mode mode, ChannelPump::Observer* observer);
   void PostTask(const Location& location, std::function<void()> func);
 
-  ChannelPump* pump() {
-    return static_cast<ChannelPump*>(&pump_);
+  std::shared_ptr<ChannelPump> pump() {
+    return pump_;
   }
 
 private:
-  ChannelPumpLibevent pump_;
+  std::shared_ptr<ChannelPump> pump_;
   Thread worker_thread_;
 
   std::list<std::shared_ptr<Delegate>> delegate_list_;

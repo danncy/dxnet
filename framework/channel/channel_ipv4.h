@@ -18,7 +18,7 @@
 
 #include "framework/public/scoped_variable.h"
 #include "framework/channel/channel.h"
-#include "framework/channel/channel_pump_libevent.h"
+#include "framework/channel/channel_pump.h"
 #include "framework/networking/socket.h"
 
 namespace framework {
@@ -28,7 +28,7 @@ struct Messenger;
 struct ChannelIPv4 : public Channel,
                      public ChannelPump::Observer {
 
-  ChannelIPv4(const Channel::Option& option);
+  explicit ChannelIPv4(const Channel::Option& option);
   ~ChannelIPv4() override;
 
   void OnRead(int fd) override;
@@ -36,6 +36,7 @@ struct ChannelIPv4 : public Channel,
   void AddWatcher(Messenger* messenger) override;
   bool StartWatching();
   bool IsValid() const override { return init_status_; }
+  std::shared_ptr<ChannelPump> pump() override;
 
 private:
   bool Init();

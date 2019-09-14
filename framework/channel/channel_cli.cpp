@@ -2,13 +2,15 @@
 
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
+#include "framework/channel/channel_pump_libevent.h"
 
 namespace framework {
 
-ChannelCli::ChannelCli(const Channel::Option& option, std::shared_ptr<Channel::Delegate> delegate = nullptr)
+ChannelCli::ChannelCli(const Channel::Option& option)
   : Channel(option),
     option_(option),
-    delegate_(std::move(delegate)),
+    pump_(std::make_shared<ChannelPumpLibevent>()),
+    delegate_(option.delegate),
     init_status_(false) {
   if (!Init()) {
     LOG(ERROR) << _F("ChannelCli failed, errno is %1, info: %2") % errno % Error();
@@ -39,7 +41,7 @@ void ChannelCli::OnRead(int fd) {
     if (n < 0) {
       LOG(ERROR) << _F("read failed, sockt fd: %1") % fd;
     } else if (n == 0) {
-      pump_.UnWatch(fd);
+      pump_->UnWatch(fd);
       close(fd);
     } else {
       if (delegate_)
@@ -62,7 +64,7 @@ void ChannelCli::Accept() {
     LOG(ERROR) << _F("accept new connection failed.");
   } else {
     // add fd to channel pump then record the fd;
-    pump_.Watch(fd,
+    pump_->Watch(fd,
                 true,
                 ChannelPump::Mode::WATCH_READ_WRITE,
                 static_cast<ChannelPump::Observer*>(this));

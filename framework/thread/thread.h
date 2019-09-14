@@ -24,6 +24,7 @@ struct Thread {
 
     size_t stack_size = 0;
     bool detached = false;
+    std::shared_ptr<ChannelPump> pump;
     ThreadPriority priority = ThreadPriority::NORMAL;
   };
 

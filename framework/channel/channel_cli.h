@@ -3,7 +3,7 @@
 
 #include "framework/public/scoped_variable.h"
 #include "framework/channel/channel.h"
-#include "framework/channel/channel_pump_libevent.h"
+#include "framework/channel/channel_pump.h"
 #include "framework/networking/socket.h"
 
 namespace framework {
@@ -11,14 +11,17 @@ namespace framework {
 struct ChannelCli : public Channel,
                     public ChannelPump::Observer {
 
-  ChannelCli(const Channel::Option& option, std::shared_ptr<Channel::Delegate> delegate);
+  explicit ChannelCli(const Channel::Option& option);
   ~ChannelCli();
 
   void OnRead(int fd) override;
   void OnWrite(int fd) override;
 
-  ChannelPump* pump() {
-    return static_cast<ChannelPump*>(&pump_);
+  void AddWatcher(Messenger* messenger) override {}
+  bool StartWatching() override { return false; };
+
+  std::shared_ptr<ChannelPump> pump() override {
+    return pump_;
   }
 
   Channel::Delegate* delegate() {
@@ -33,7 +36,7 @@ private:
 
 private:
   Channel::Option option_;
-  ChannelPumpLibevent pump_;
+  std::shared_ptr<ChannelPump> pump_;
 
   std::unique_ptr<SocketFileDescriptor> serv_fd_;
   std::shared_ptr<Channel::Delegate> delegate_;

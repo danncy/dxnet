@@ -1,7 +1,7 @@
 curent_dir=$(shell pwd)
 libevent_dir := $$(dirname $(wildcard ${curent_dir}/third_party/libevent*/configure))
 
-.PHONY : all build-dir build-src build-libevent clean clean-libevent
+.PHONY : all build-dir build-src build-libevent clean clean-libevent install-libevent
 
 all:
 	$(MAKE) build-libevent
@@ -26,13 +26,18 @@ clean:
 	@echo "make clean ok"
 
 build-libevent: build-dir
-	@if [ -f "${libevent_dir}/Makefile" ]; \
+	@if [ ! -f "${curent_dir}/build/lib/libevent.so" && -f "${libevent_dir}/Makefile" ]; \
 	then \
 		cd ${libevent_dir} && make -j4; \
-	else \
+		${MAKE} install-libevent; \
+	elif [ ! -f "${curent_dir}/build/lib/libevent.so" ]; then \
 		cd ${libevent_dir} && ./configure && make -j4; \
+		${MAKE} install-libevent; \
+	else \
+		echo "libevent is installed"; \
 	fi
 
+install-libevent:
 	@install -d ${curent_dir}/build/lib
 	@install -d ${curent_dir}/build/third_party/libevent/include
 	@install ${libevent_dir}/.libs/*.a ${curent_dir}/build/lib/

@@ -20,7 +20,7 @@ ADD_SUBDIRECTORY(network_adapter)
 
 LINK_DIRECTORIES(${PROJECT_BINARY_DIR}/lib)
 ADD_EXECUTABLE(main main.cpp)
-TARGET_LINK_LIBRARIES(main framework pthread event)
+TARGET_LINK_LIBRARIES(main framework pthread event interface)
 
 ADD_EXECUTABLE(adapterd adapterd.cpp)
 TARGET_LINK_LIBRARIES(adapterd framework pthread event)

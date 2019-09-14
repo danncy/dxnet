@@ -1,12 +1,14 @@
 #include "messenger.h"
 #include "framework/channel/channel.h"
+#include "framework/channel/channel_pump_libevent.h"
 #include "framework/public/rand_util.h"
 #include "framework/public/logging.h"
 
 namespace framework {
 
 Messenger::Messenger()
-  : worker_thread_(std::string("th.") + GenerateUniqueRandomProcId()) {
+  : pump_(std::make_shared<ChannelPumpLibevent>()),
+    worker_thread_(std::string("th.") + GenerateUniqueRandomProcId()) {
     worker_thread_.Start();
   }
 
@@ -25,7 +27,7 @@ bool Messenger::Watch(Channel* channel, std::shared_ptr<Delegate> delegate) {
 
 bool Messenger::WatchFileDescriptor(int fd,
     bool persistent, ChannelPump::Mode mode, ChannelPump::Observer* observer) {
-  return pump_.Watch(fd, persistent, mode, observer);
+  return pump_->Watch(fd, persistent, mode, observer);
 }
 
 void Messenger::PostTask(const Location& location, std::function<void()> func) {

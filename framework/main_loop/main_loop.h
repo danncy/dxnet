@@ -11,8 +11,8 @@
 namespace framework {
 
 /*
- * MainLoop use to execute Task in the current thread(as pthread.) 
- * task is running in the mainloop, 
+ * MainLoop use to execute Task in the current thread(as pthread.)
+ * task is running in the mainloop,
  * with their current process and thread access rights.
  */
 struct MainLoop {
@@ -25,7 +25,13 @@ struct MainLoop {
 
   static MainLoop* current();
   void Run();
-  void RunWith(std::unique_ptr<ChannelPump> pump);
+  void RunWithPump();
+
+  inline void SetChannelPump(std::shared_ptr<ChannelPump> pump) {
+    pump_ = pump;
+  }
+
+  inline bool HasPump() const { return pump_.get() != nullptr; }
 
   void PostTask(Task task);
   void PostTask(std::function<void()> closure);
@@ -38,7 +44,7 @@ struct MainLoop {
 private:
   TaskQueue pending_task_queue_;
   State state_;
-  std::unique_ptr<ChannelPump> pump_;
+  std::shared_ptr<ChannelPump> pump_;
 };
 
 } // namespace framework

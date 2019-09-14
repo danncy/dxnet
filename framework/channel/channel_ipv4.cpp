@@ -6,6 +6,7 @@
 #include "framework/public/logging.h"
 #include "framework/public/format.h"
 #include "framework/messenger/messenger.h"
+#include "framework/channel/channel_pump_libevent.h"
 
 namespace framework {
 
@@ -151,6 +152,10 @@ void ChannelIPv4::AddWatcher(Messenger* messenger) {
   if (messenger) {
     messenger_ = messenger;
   }
+}
+
+std::shared_ptr<ChannelPump> ChannelIPv4::pump() {
+  return messenger_ ? messenger_->pump() : nullptr;
 }
 
 }
