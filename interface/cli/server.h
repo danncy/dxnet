@@ -7,8 +7,7 @@
 namespace cli {
 
 // this class implementation of cli server.
-// 1. should accept the connection in local or remote
-// 2. recv fd via unixsock
+// should accept the connection in local or remote
 struct Server {
 
   Server();

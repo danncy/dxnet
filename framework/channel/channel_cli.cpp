@@ -44,8 +44,12 @@ void ChannelCli::OnRead(int fd) {
       pump_->UnWatch(fd);
       close(fd);
     } else {
-      if (delegate_)
-        delegate_->OnRecv(buf, n);
+      if (delegate_) {
+        if (!delegate_->OnRecv(buf, n)) {
+          pump_->UnWatch(fd);
+          close(fd);
+        }
+      }
     }
   }
 }
