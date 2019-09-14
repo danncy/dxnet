@@ -118,7 +118,7 @@ void ChannelIPv4::OnRead(int fd) {
   } else if (fd == sock_.get()) {
     // TODO:
     // Delegate will handle the event.
-    char buf[2048] = {0};
+    char buf[kMaxRecvBufLen] = {0};
     ssize_t n = read(fd, buf, sizeof(buf));
     if (n < 0) {
       LOG(ERROR) << _F("read failed, sockt fd: %1") % fd;

@@ -6,7 +6,7 @@
 #include "interface/cli/server.h"
 #include <functional>
 
-void log_test() {
+void LogTest() {
   LOG(DEBUG) << "thread testing log.";
   LOG(DEBUG) << _F("thread testing %1 log %2.") % "%2" % "good!";
   LOG(DEBUG) << _Fmt("%1,%2,%3,%1,%4", 1, "test", 9.1, "中国");
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   } else {
     LOG(DEBUG) << "thread start success!\n";
   }
-  thread.main_loop()->PostTask(framework::Task(std::bind(log_test)));
+  thread.main_loop()->PostTask(framework::Task(std::bind(LogTest)));
   thread.main_loop()->PostTask(framework::Task(std::bind([](){
     LOG(DEBUG) << "thread testing.\n";
         })));

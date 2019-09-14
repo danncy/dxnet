@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <iomanip>
+#include <libgen.h>
 
 namespace framework {
 
@@ -9,7 +10,7 @@ Logger::Targets Logger::target = Logger::Targets::CONSOLE;
 
 Logger::Logger(Level::Severity level,
                const char* file,
-               int line) 
+               int line)
   : level_(level),
     file_(file),
     line_(line) {
@@ -18,10 +19,12 @@ Logger::Logger(Level::Severity level,
 
 void Logger::Init() {
   std::time_t t = std::time(nullptr);
-  stream_ << LevelToString(level_) 
-          << "["
+  stream_ << "["
           << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S")
-          << "][" << file_ << "(" << line_ << ")]:";
+          << "]"
+          << LevelToString(level_)
+          <<"[" << basename(const_cast<char*>(file_.c_str()))
+          << "(" << line_ << ")]:";
 }
 
 std::string Logger::LevelToString(Level::Severity level) {

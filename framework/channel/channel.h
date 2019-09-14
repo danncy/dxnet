@@ -25,6 +25,8 @@ namespace framework {
 struct Messenger;
 struct ChannelPump;
 
+constexpr const int kMaxRecvBufLen = 4096;
+
 struct Channel {
   enum class Type : int {
     FIFO,

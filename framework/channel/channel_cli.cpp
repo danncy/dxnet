@@ -43,19 +43,27 @@ void ChannelCli::OnRead(int fd) {
   if (fd == serv_fd_->GetFileDescriptor()) {
     Accept();
   } else {
-    char buf[2048] = {0};
-    ssize_t n = read(fd, buf, sizeof(buf));
-    if (n < 0) {
-      LOG(ERROR) << _F("read failed, sockt fd: %1") % fd;
-    } else if (n == 0) {
+    char buf[kMaxRecvBufLen] = {0};
+    ssize_t n = -1;
+
+    do {
+      n = read(fd, buf, sizeof(buf));
+      if (n < 0 && (errno == EINTR || errno == EAGAIN)) {
+        continue;
+      } else {
+        break;
+      }
+    } while (true);
+
+    if (n == 0) {
       pump_->UnWatch(fd);
       close(fd);
+      LOG(INFO) << _F("a connection is closed by peer unexpected exit, fd = %1") % fd;
     } else {
-      if (delegate_) {
-        if (!delegate_->OnRecv(buf, n)) {
-          pump_->UnWatch(fd);
-          close(fd);
-        }
+      if (delegate_ && !delegate_->OnRecv(buf, n)) {
+        pump_->UnWatch(fd);
+        close(fd);
+        LOG(INFO) << _F("a connection is closed by peer, fd = %1") % fd;
       }
     }
   }
