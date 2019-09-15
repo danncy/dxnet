@@ -31,7 +31,7 @@ bool ChannelCli::Init() {
     // add serv_fd_ to channel pump then record the fd;
     pump_->Watch(serv_fd_->GetFileDescriptor(),
                 true,
-                ChannelPump::Mode::WATCH_READ_WRITE,
+                ChannelPump::Mode::WATCH_READ,
                 static_cast<ChannelPump::Observer*>(this));
     LOG(INFO) << _F("watch the server fd, fd = %1.") % serv_fd_->GetFileDescriptor();
   }

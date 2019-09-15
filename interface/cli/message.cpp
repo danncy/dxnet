@@ -31,14 +31,24 @@ bool Message::OnSend(int fd) {
     return false;
 
   std::string msg = queue_.front();
-  do {
-    int r = write(fd, msg.c_str(), msg.length());
+  int length  = msg.length();
+  int times   = 0;
+  int written = 0;
+
+  while(written != length) {
+    if (times > 5) {
+      LOG(WARN) << _F("try times > %1, don't continue.") % times;
+      return false;
+    }
+
+    int r = write(fd, msg.c_str() + written, length - written);
+    times++;
+
     if (r < 0 && (errno == EINTR || errno == EAGAIN)) {
       continue;
-    } else {
-      break;
     }
-  } while(true);
+    written += r;
+  };
 
   queue_.pop_front();
 
