@@ -6,17 +6,45 @@
 #include <functional>
 #include <any>
 
+#include "framework/string/split.h"
+
 namespace cli {
 
 struct Argument {
+  Argument(const std::string& name, const std::string& description, const std::string& value)
+    : name_(name),
+      description_(description),
+      value_(value) {}
 
+  Argument(Argument&& other)
+    : name_(other.name_),
+      description_(other.description_),
+      value_(other.value_) {}
+
+  ~Argument() = default;
+
+  const std::string& Name() const { return name_; }
+  const std::string& Help() const { return description_; }
+  const std::string& Value() const { return value_; }
+
+  std::string ToString();
+
+private:
+  std::string name_;
+  std::string description_;
+  std::string value_;
 };
 
-const auto ParseInt = [](const std::string& value) { return std::stoi(value); };
-const auto ParseFloat = [](const std::string& value) { return std::stof(value); };
-const auto ParseDouble = [](const std::string& value) { return std::stod(value); };
-//const auto ParseIntArray = [](const std::string& value) { return std::vector<int>();};
-//const auto ParseStrArray = [](const std::string& value) { return std::vector<std::string>(); };
+const auto ParseInt      = [](const std::string& value) { return std::stoi(value); };
+const auto ParseFloat    = [](const std::string& value) { return std::stof(value); };
+const auto ParseDouble   = [](const std::string& value) { return std::stod(value); };
+const auto ParseIntArray = [](const std::string& value) {
+  std::vector<int> v;
+  for (auto& s : framework::split(value, ','))
+    v.push_back(std::stoi(s));
+  return v;
+};
+const auto ParseStrArray = [](const std::string& value) { return framework::split(value, ','); };
 
 // Command cmd("program");
 // cmd.Option("help")
@@ -32,6 +60,7 @@ struct Command {
 
 private:
   std::string name_;
+  std::string help_;
   std::vector<Argument> arguments_;
 };
 
@@ -42,8 +71,9 @@ struct Program {
   static Program* instance();
 
   cli::Command& Command(const std::string& name, const std::string& description /* = "" */);
-  Program& Option(const std::string& name, const std::string& description, const std::string& value /*= "" */);
-  Program& Action();
+  Program& Option(const std::string& name,
+    const std::string& description,
+    const std::string& value, std::function< std::any(const std::string&) > action);
 
   bool Parse(const std::string& args);
 

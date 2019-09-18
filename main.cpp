@@ -4,6 +4,7 @@
 #include "framework/main_loop/main_loop.h"
 #include "framework/channel/channel_pump_libevent.h"
 #include "interface/cli/server.h"
+#include "interface/cli/command.h"
 #include <functional>
 
 void LogTest() {
@@ -20,6 +21,14 @@ void LogTest() {
 
 int main(int argc, char** argv) {
   LOG(INFO) << "test logging\n";
+  LOG(INFO) << _F("%1") % cli::Argument("--test", "a test option", "just").ToString();
+
+  for (auto& s : framework::split("%1,%2,%3,%1,%4", "%"))
+    LOG(DEBUG) << s;
+
+  for (auto& s : framework::split("%1,%2,%3,%1,%4", ','))
+    LOG(DEBUG) << s;
+
   framework::Thread thread("main_thread");
 
   if(!thread.Start()) {
