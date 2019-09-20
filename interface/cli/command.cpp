@@ -15,4 +15,28 @@ std::string Argument::ToString() {
   return s.str();
 }
 
+Command::Command(const std::string& name)
+  : name_(name) {}
+
+Command::~Command() {}
+
+Command& Command::AddOption(const std::string& name, const std::string& description) {
+  arguments_.emplace_back(Argument(name, description, nullptr));
+  return *this;
+}
+
+Command& Command::AddOption(const std::string& name, const std::string& description,
+  std::function<std::any(const std::string&)> action) {
+  arguments_.emplace_back(Argument(name, description, action));
+  return *this;
+}
+
+Argument& Command::Option(const std::string& name) {
+  return AddOption(name, "").arguments_.back();
+}
+
+Command& Command::Help(const std::string& description) {
+  return *this;
+}
+
 } // namespace cli

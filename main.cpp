@@ -21,7 +21,7 @@ void LogTest() {
 
 int main(int argc, char** argv) {
   LOG(INFO) << "test logging\n";
-  LOG(INFO) << _F("%1") % cli::Argument("--test", "a test option", "just").ToString();
+  LOG(INFO) << _F("%1") % cli::Argument("--test", "a test option").ToString();
 
   for (auto& s : framework::split("%1,%2,%3,%1,%4", "%"))
     LOG(DEBUG) << s;

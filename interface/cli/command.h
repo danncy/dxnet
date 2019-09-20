@@ -11,21 +11,39 @@
 namespace cli {
 
 struct Argument {
-  Argument(const std::string& name, const std::string& description, const std::string& value)
+  explicit Argument(const std::string& name)
+    : name_(name),
+      description_(""),
+      action_(nullptr) {}
+
+  Argument(const std::string& name, const std::string& description,
+    std::function<std::any(const std::string&)> action = nullptr)
     : name_(name),
       description_(description),
-      value_(value) {}
+      action_(action) {}
 
   Argument(Argument&& other)
     : name_(other.name_),
       description_(other.description_),
-      value_(other.value_) {}
+      value_(other.value_),
+      action_(other.action_) {}
 
   ~Argument() = default;
 
   const std::string& Name() const { return name_; }
-  const std::string& Help() const { return description_; }
+
+  Argument& Usage(const std::string& description) {
+    description_ = description;
+    return *this;
+  }
+
+  Argument& Action(std::function<std::any(const std::string&)> action) {
+    parsed_value_ = action(this->value_);
+    return *this;
+  }
+
   const std::string& Value() const { return value_; }
+  void Value(const std::string& value) { value_ = value; }
 
   std::string ToString();
 
@@ -33,6 +51,8 @@ private:
   std::string name_;
   std::string description_;
   std::string value_;
+  std::any parsed_value_;
+  std::function<std::any(const std::string&)> action_;
 };
 
 const auto ParseInt      = [](const std::string& value) { return std::stoi(value); };
@@ -48,15 +68,18 @@ const auto ParseStrArray = [](const std::string& value) { return framework::spli
 
 // Command cmd("program");
 // cmd.Option("help")
-//    .Help("print help information.")
+//    .Usage("print help information.")
 //    .Action([](const std::string& value) { return std::stoi(value); });
 struct Command {
-  Command(const std::string& name /* = ""*/);
+  Command(const std::string& name);
   ~Command();
 
-  Command& Option(const std::string& name, const std::string& description, const std::string& value);
+  Command& AddOption(const std::string& name, const std::string& description);
+  Command& AddOption(const std::string& name, const std::string& description,
+    std::function<std::any(const std::string&)> action);
+
   Command& Help(const std::string& description);
-  Command& Action(std::function< std::any(const std::string&) > action);
+  Argument& Option(const std::string& name);
 
 private:
   std::string name_;
@@ -70,10 +93,10 @@ struct Program {
 
   static Program* instance();
 
-  cli::Command& Command(const std::string& name, const std::string& description /* = "" */);
-  Program& Option(const std::string& name,
-    const std::string& description,
-    const std::string& value, std::function< std::any(const std::string&) > action);
+  Program& AddCommand(Command cmd);
+  Program& Option(const std::string& name, const std::string& description,
+    std::function< std::any(const std::string&) > action);
+  void Usage();
 
   bool Parse(const std::string& args);
 
