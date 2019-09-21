@@ -39,4 +39,38 @@ Command& Command::Help(const std::string& description) {
   return *this;
 }
 
+std::vector<std::unique_ptr<Program>> Program::program_list;
+
+// static
+Program& Program::instance(const std::string& name) {
+  program_list.emplace_back(std::make_unique<Program>(name));
+  return *program_list.back().get();
+}
+
+Program::Program(const std::string& name)
+  : name_(name) {}
+
+Program::~Program() {}
+
+Program& Program::AddCommand(Command cmd) {
+  commands_.emplace_back(std::move(cmd));
+  return *this;
+}
+
+Program& Program::Option(const std::string& name, const std::string& description,
+  std::function<std::any(const std::string&)> action)
+{
+  arguments_.emplace_back(Argument(name, description, action));
+  return *this;
+}
+
+void Program::Usage() {
+
+}
+
+bool Program::Parse(const std::string& args) {
+
+  return true;
+}
+
 } // namespace cli

@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <any>
+#include <memory>
 
 #include "framework/string/split.h"
 
@@ -21,6 +22,13 @@ struct Argument {
     : name_(name),
       description_(description),
       action_(action) {}
+
+  Argument(const Argument& other) {
+    name_ = other.name_;
+    description_ = other.description_;
+    value_ = other.value_;
+    action_ = other.action_;
+  }
 
   Argument(Argument&& other)
     : name_(other.name_),
@@ -66,10 +74,12 @@ const auto ParseIntArray = [](const std::string& value) {
 };
 const auto ParseStrArray = [](const std::string& value) { return framework::split(value, ','); };
 
-// Command cmd("program");
-// cmd.Option("help")
-//    .Usage("print help information.")
-//    .Action([](const std::string& value) { return std::stoi(value); });
+/**
+ * Command cmd("program");
+ * cmd.Option("help")
+ *  .Usage("print help information.")
+ *  .Action([](const std::string& value) { return std::stoi(value); });
+ */
 struct Command {
   Command(const std::string& name);
   ~Command();
@@ -87,11 +97,24 @@ private:
   std::vector<Argument> arguments_;
 };
 
+/**
+ * @brief 定义命令行子程序的命令选项
+ *
+ * Program prog("ping");
+ * prog.AddOption("--count", "ping times", ParseInt)
+ *  .AddOption("<address>", "ping target ipv4 address", [](const std::string& value){ return inet_addr(value); });
+ *
+ * Program::instance("git")
+ *  .AddCommand(Command("clone").AddOption("--username", "username").AddOption("--password", "password").Option("<repo>"))
+ *  .AddCommand(Command("checkout").Option("<repo>"))
+ *  .AddCommand(Command("reset").AddOption("--commit-id", "the commit id", ParseInt));
+ */
 struct Program {
   Program(const std::string& name);
   ~Program();
 
-  static Program* instance();
+  static Program& instance(const std::string& name);
+  static std::vector<std::unique_ptr<Program>> program_list;
 
   Program& AddCommand(Command cmd);
   Program& Option(const std::string& name, const std::string& description,
