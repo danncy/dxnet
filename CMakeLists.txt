@@ -8,6 +8,7 @@ INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/
     ${PROJECT_SOURCE_DIR}/build/
     ${PROJECT_SOURCE_DIR}/build/third_party/libevent/include
+    ${PROJECT_SOURCE_DIR}/build/third_party/mockcpp/include
     )
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)

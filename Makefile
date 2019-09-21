@@ -1,11 +1,13 @@
 curent_dir=$(shell pwd)
 libevent_dir := $$(dirname $(wildcard ${curent_dir}/third_party/libevent*/configure))
+mockcpp_dir := ${curent_dir}/tests/mockcpp
 
 .PHONY : all build-dir build-src build-libevent clean clean-libevent install-libevent
 
 all:
 	$(MAKE) build-libevent
 	$(MAKE) build-src
+	$(MAKE) build-mockcpp
 
 build-dir:
 	@if [ ! -d "build" ]; \
@@ -51,3 +53,21 @@ install-libevent:
 
 clean-libevent:
 	@cd ${libevent_dir} && make clean
+
+.PHONY : build-mockcpp install-mockcpp clean-mockcpp
+
+build-mockcpp:
+	@echo "mockcpp building"
+	@if [ ! -d "${mockcpp_dir}/build" ]; then \
+		mkdir -p ${mockcpp_dir}/build; \
+	fi
+	@cd ${mockcpp_dir}/build && cmake .. && make -j4
+
+install-mockcpp:
+	@install -d ${curent_dir}/build/lib
+	@install -d ${curent_dir}/build/third_party/mockcpp/include
+	@install ${mockcpp_dir}/build/src/*.a ${curent_dir}/build/lib/
+	@cp -rf ${mockcpp_dir}/include/* ${curent_dir}/build/third_party/mockcpp/include/
+
+clean-mockcpp:
+	@rm -rf ${mockcpp_dir}/build
