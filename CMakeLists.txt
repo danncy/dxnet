@@ -3,7 +3,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 ADD_DEFINITIONS(-std=c++17)
 SET(CMAKE_BUILE_TYPE DEBUG)
 SET(CMAKE_C_FLAGS_DEBUG "-g -Wall")
-#SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--export-all-symbols")
 
 INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/
@@ -24,3 +23,6 @@ TARGET_LINK_LIBRARIES(main framework pthread event interface)
 
 ADD_EXECUTABLE(adapterd adapterd.cpp)
 TARGET_LINK_LIBRARIES(adapterd framework pthread event)
+
+ADD_EXECUTABLE(unittest tests/main.cpp)
+TARGET_LINK_LIBRARIES(unittest gtest pthread interface framework event)
