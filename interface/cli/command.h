@@ -117,6 +117,11 @@ struct Program {
   static std::vector<std::unique_ptr<Program>> program_list;
 
   Program& AddCommand(Command cmd);
+  Program& operator()(Command cmd) {
+    commands_.emplace_back(std::move(cmd));
+    return *this;
+  }
+
   Program& Option(const std::string& name, const std::string& description,
     std::function< std::any(const std::string&) > action);
   void Usage();

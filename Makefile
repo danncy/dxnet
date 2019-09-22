@@ -8,6 +8,7 @@ all:
 	$(MAKE) build-libevent
 	$(MAKE) build-src
 	$(MAKE) build-mockcpp
+	${MAKE} unittest
 
 build-dir:
 	@if [ ! -d "build" ]; \
@@ -54,7 +55,7 @@ install-libevent:
 clean-libevent:
 	@cd ${libevent_dir} && make clean
 
-.PHONY : build-mockcpp install-mockcpp clean-mockcpp
+.PHONY : build-mockcpp install-mockcpp clean-mockcpp unittest
 
 build-mockcpp:
 	@echo "mockcpp building"
@@ -71,3 +72,8 @@ install-mockcpp:
 
 clean-mockcpp:
 	@rm -rf ${mockcpp_dir}/build
+
+unittest:
+	@if [ -f "${curent_dir}/build/bin/unittest" ]; then \
+		"${curent_dir}/build/bin/unittest"; \
+	fi

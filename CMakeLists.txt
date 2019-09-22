@@ -25,5 +25,6 @@ TARGET_LINK_LIBRARIES(main framework pthread event interface)
 ADD_EXECUTABLE(adapterd adapterd.cpp)
 TARGET_LINK_LIBRARIES(adapterd framework pthread event)
 
-ADD_EXECUTABLE(unittest tests/main.cpp)
-TARGET_LINK_LIBRARIES(unittest gtest pthread interface framework event)
+AUX_SOURCE_DIRECTORY(./tests/cli TEST_DIR_SRCS)
+ADD_EXECUTABLE(unittest tests/main.cpp ${TEST_DIR_SRCS})
+TARGET_LINK_LIBRARIES(unittest gtest mockcpp pthread interface framework event)
