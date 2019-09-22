@@ -104,29 +104,39 @@ private:
  * prog.AddOption("--count", "ping times", ParseInt)
  *  .AddOption("<address>", "ping target ipv4 address", [](const std::string& value){ return inet_addr(value); });
  *
- * Program::instance("git")
- *  .AddCommand(Command("clone").AddOption("--username", "username").AddOption("--password", "password").Option("<repo>"))
- *  .AddCommand(Command("checkout").Option("<repo>"))
+ * Program::New("git")
+ *  .AddCommand(Command("clone").AddOption("--username", "username").AddOption("--password", "password").AddOption("<repo>", "path"))
+ *  .AddCommand(Command("checkout").AddOption("<repo>", "repo path"))
  *  .AddCommand(Command("reset").AddOption("--commit-id", "the commit id", ParseInt));
  */
 struct Program {
   Program(const std::string& name);
   ~Program();
 
-  static Program& instance(const std::string& name);
-  static std::vector<std::unique_ptr<Program>> program_list;
+  static Program& New(const std::string& name);
+  static std::vector<std::unique_ptr<Program>>::iterator FindIterator(const std::string& name);
+  static bool Delete(const std::string& name);
+  static void Destroy();
+  static std::vector<std::unique_ptr<Program>>& All();
+
+  inline const std::string& name() const { return name_; }
 
   Program& AddCommand(Command cmd);
-  Program& operator()(Command cmd) {
+  inline Program& operator()(Command cmd) {
     commands_.emplace_back(std::move(cmd));
     return *this;
   }
 
   Program& Option(const std::string& name, const std::string& description,
     std::function< std::any(const std::string&) > action);
+
   void Usage();
+  std::string Dump();
 
   bool Parse(const std::string& args);
+
+protected:
+  static std::vector<std::unique_ptr<Program>> program_list;
 
 private:
   std::string name_;

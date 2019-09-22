@@ -62,6 +62,14 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "fstream": "cpp",
+        "locale": "cpp",
+        "stack": "cpp",
+        "valarray": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp"
     }
 }
